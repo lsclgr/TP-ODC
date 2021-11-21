@@ -30,7 +30,7 @@ typedef struct {
     Address add3;
 } Instruction;
 
-MemoryBlock *createRAM(MemoryBlock *RAM, int size);
+MemoryBlock *createRAM(MemoryBlock *RAM);
 MemoryBlock *createEmptyCache(int size, MemoryBlock *cache);
 MemoryBlock *createCacheWithData(int size, MemoryBlock *cache);
 

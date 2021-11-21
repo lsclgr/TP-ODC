@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-MemoryBlock *createRAM(MemoryBlock *RAM, int size) {
-    RAM = (MemoryBlock *)malloc(size * sizeof(MemoryBlock));
+MemoryBlock *createRAM(MemoryBlock *RAM) {
+    RAM = (MemoryBlock *)malloc(sizeRAM * sizeof(MemoryBlock));
     for (int i = 0; i < sizeRAM; i++) {
         RAM->addBlock = i;
         RAM->updated = false;
