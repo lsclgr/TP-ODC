@@ -4,6 +4,7 @@
 #define sizeRAM 1000
 #define sizeCache1 16
 #define sizeCache2 32
+#define sizeCache3 64
 #define sizeProgram 10001
 #define MIN_VALUE -2147483648
 
@@ -21,15 +22,16 @@ typedef struct {
 } MemoryBlock;
 
 typedef struct {
+    int opcode;
     Address add1;
     Address add2;
     Address add3;
-    int opcode;
 } Instruction;
 
 MemoryBlock RAM[sizeRAM];
 MemoryBlock cache1[sizeCache1];
 MemoryBlock cache2[sizeCache2];
+MemoryBlock cache3[sizeCache3];
 
 void createRAM();
 void createEmptyCache(int size, MemoryBlock *cache);
@@ -55,19 +57,19 @@ void createRAM() {
 
 void createEmptyCache(int size, MemoryBlock *cache) {
     for (int i = 0; i < size; i++) {
-        RAM->addBlock = MIN_VALUE;
-        RAM->updated = 1;
-        RAM->cost = 0;
-        RAM->cacheHit = 0;
+        cache->addBlock = MIN_VALUE;
+        cache->updated = 1;
+        cache->cost = 0;
+        cache->cacheHit = 0;
     }
 }
 
 void createCacheWithData(int size, MemoryBlock *cache) {
     for (int i = 0; i < size; i++) {
-        RAM->addBlock = MIN_VALUE;
-        RAM->updated = 1;
-        RAM->cost = 0;
-        RAM->cacheHit = 0;
+        cache->addBlock = MIN_VALUE;
+        cache->updated = 1;
+        cache->cost = 0;
+        cache->cacheHit = 0;
         for (int j = 0; j < 4; j++) {
             cache->words[j] = rand() % 1000000;
         }
