@@ -65,11 +65,12 @@ MemoryBlock CachesTest(int cache1Position, int cache2Position,
                        int cache3Position, MemoryBlock *cache1,
                        MemoryBlock *cache2, MemoryBlock *cache3, int cost,
                        int isCache2) {
+    MemoryBlock aux;
     if (!isCache2) {
         if (!cache2->updated) {
-            cache2[cache1Position] = cache3[cache2Position];
+            cache2[cache2Position] = cache3[cache3Position];
         } else {
-            MemoryBlock aux = cache2[cache2Position];
+            aux = cache2[cache2Position];
             cache2[cache2Position] = cache3[cache3Position];
             cache3[cache3Position] = aux;
         }
@@ -77,7 +78,7 @@ MemoryBlock CachesTest(int cache1Position, int cache2Position,
     if (!cache1->updated) {
         cache1[cache1Position] = cache2[cache2Position];
     } else {
-        MemoryBlock aux = cache1[cache1Position];
+        aux = cache1[cache1Position];
         cache1[cache1Position] = cache2[cache2Position];
         cache2[cache2Position] = aux;
     }
