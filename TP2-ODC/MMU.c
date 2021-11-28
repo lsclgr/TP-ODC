@@ -26,7 +26,7 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
                               cache1, cache2, cache3, cost, 1);
         } else {
             if (cache3[cache3Position].addBlock == add.addBlock) {
-                cost += 110;
+                cost += 1110;
                 // pq ele não colocou o custo?
                 cache3[cache3Position].cacheHit = 3;
                 // cache3[cache3Position].updated = true
@@ -35,7 +35,7 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
                                   0);
             } else {
                 // buscar na ram E O REPASSAR A C2 E DEPOIS A C1
-                cost += 1110;
+                cost += 11110;
                 if (!cache3[cache3Position].updated) {
                     cache3[cache3Position] = RAM[(int)add.addBlock];
                     cache3[cache3Position].cacheHit = 4;
@@ -44,10 +44,8 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
                                       cost, 0);
 
                 } else {
-                    RAM[cache3[cache3Position].addBlock] =
-                        cache3[cache3Position];
-                    RAM[cache3[cache3Position].addBlock].updated =
-                        false;  // virar false
+                    RAM[cache3[cache3Position].addBlock] = cache3[cache3Position];
+                    RAM[cache3[cache3Position].addBlock].updated = false;  // virar false
 
                     cache3[cache3Position] = RAM[(int)add.addBlock];
                     cache3[cache3Position].cacheHit = 4;
