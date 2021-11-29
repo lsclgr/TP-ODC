@@ -2,6 +2,7 @@
 #define TAD_CACHE_H
 
 #include <stdbool.h>
+#include <time.h>
 
 #define sizeRAM 1000
 #define sizeCache1 16
@@ -21,6 +22,7 @@ typedef struct {
     bool updated;
     int cost;
     int cacheHit;
+    int sec;
 } MemoryBlock;
 
 typedef struct {
