@@ -7,9 +7,10 @@
 
 MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
                              MemoryBlock *cache2, MemoryBlock *cache3) {
-    // int cache1Position = (int)add.addBlock % sizeCache1;  // valor entre 0 e 15
-    // int cache2Position = (int)add.addBlock % sizeCache2;  // valor entre 0 e 31
-    // int cache3Position = (int)add.addBlock % sizeCache3;  // valor entre 0 e 63
+    // int cache1Position = (int)add.addBlock % sizeCache1;  // valor entre 0 e
+    // 15 int cache2Position = (int)add.addBlock % sizeCache2;  // valor entre 0
+    // e 31 int cache3Position = (int)add.addBlock % sizeCache3;  // valor entre
+    // 0 e 63
     int cost = 0;
     time_t sec;
     time(&sec);
@@ -51,12 +52,12 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
         if (!cache3[i].updated) {
             cache3[i] = RAM[(int)add.addBlock];
             cache3[i].cacheHit = 4;
-            return CachesTest(i, cache1, cache2, cache3,
-                              cost, 0);
+            return CachesTest(i, cache1, cache2, cache3, cost, 0);
         }
     }
     // LANCE DO TEMPO
-    // Funcao PARA VERIFICAR A POSICAO QUE ESTA A MAIS TEMPO SEM SER CONVOCADA (MAIOR TEMPO)
+    // Funcao PARA VERIFICAR A POSICAO QUE ESTA A MAIS TEMPO SEM SER CONVOCADA
+    // (MAIOR TEMPO)
 
     /* RAM[cache3[cache3Position].addBlock] = cache3[cache3Position];
      RAM[cache3[cache3Position].addBlock].updated = false;  // virar false
@@ -66,7 +67,6 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
      return CachesTest(cache1Position, cache2Position,
                        cache3Position, cache1, cache2, cache3,
                        cost, 0);
-     ;
 
 
 }
