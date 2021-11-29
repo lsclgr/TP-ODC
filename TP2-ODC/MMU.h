@@ -5,7 +5,8 @@
 
 MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
                              MemoryBlock *cache2, MemoryBlock *cache3);
-MemoryBlock CachesTest(int, MemoryBlock *, MemoryBlock *,
+MemoryBlock cachesTest(int, MemoryBlock *, MemoryBlock *,
                        MemoryBlock *, int, int);
+int LRU(int sizeCache);
 
 #endif
