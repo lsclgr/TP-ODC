@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// maquina -> cache1 -> cache2 -> cache3 -> RAM
+
 MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
                              MemoryBlock *cache2, MemoryBlock *cache3) {
     int cache1Position = (int)add.addBlock % sizeCache1;  // valor entre 0 e 15
