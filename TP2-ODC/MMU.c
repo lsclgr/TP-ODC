@@ -52,64 +52,104 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
         if (!cache3[i].updated) {
             cache3[i] = RAM[(int)add.addBlock];
             cache3[i].cacheHit = 4;
-            return CachesTest(i, cache1, cache2, cache3, cost, 0);
+            return cachesTest(i, cache1, cache2, cache3, cost, 0);
         }
     }
-    // teste
     //  LANCE DO TEMPO
     //  Funcao PARA VERIFICAR A POSICAO QUE ESTA A MAIS TEMPO SEM SER CONVOCADA
     //  (MAIOR TEMPO)
 
-    RAM[cache3[cache3Position].addBlock] = cache3[cache3Position];
-    RAM[cache3[cache3Position].addBlock].updated = false;  // virar false
+    int cache3Position = getOldestPosition(sizeCache3, cache3);
+
+    // RAM[cache3[cache3Position].addBlock] = cache3[cache3Position];
+    // RAM[cache3[cache3Position].addBlock].updated = false;  // virar false
 
     cache3[cache3Position] = RAM[(int)add.addBlock];
     cache3[cache3Position].cacheHit = 4;
-    return CachesTest(cache1Position, cache2Position, cache3Position, cache1,
-                      cache2, cache3, cost, 0);
+    cache3[cache3Position].sec = sec;
+    return cachesTest(add.addBlock, cache1, cache2, cache3, cost, 0);
+}
+MemoryBlock cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
+                       MemoryBlock *cache3, int cost, int isCache2) {
+    MemoryBlock aux;
+    int cache1position, cache2position, verify = 0;
+    time_t sec;
+    time(&sec);
 
     if (!isCache2) {
-        if (!cache2->updated) {
-            cache2[cache2Position] = cache3[cache3Position];
+        for (int j = 0; j < sizeCache2; j++) {
+            if (!cache2[j].updated) {
+                cache2position = j;
+                verify = 1;
+            }
+        }
+        if (verify == 0) {
+            cache2position = getOldestPosition(sizeCache2, cache2);
+            aux = cache2[cache2position];
+            cache2[cache2position] = cache3[i];
+            cache3[i] = aux;
         } else {
-            aux = cache2[cache2Position];
-            cache2[cache2Position] = cache3[cache3Position];
-            cache3[cache3Position] = aux;
+            cache2[cache2position] = cache3[i];
+        }
+        cache2[cache2position].sec = sec;
+    }
+    
+    verify = 0;
+    for (int j = 0; j < sizeCache1; j++) {
+        if (!cache1[j].updated) {
+            cache1position = j;
+            verify = 1;
         }
     }
-    /* for(int j=0;j<sizeCache1;j++){
-         if (!cache1[j].updated){
-             cache1[j] = cache2[i];
-         }
-     }*/
-
-    if (!cache1->updated) {
-        cache1[cache1Position] = cache2[cache2Position];
+    if (verify == 0) {
+        cache1position = getOldestPosition(sizeCache1, cache1);
+        aux = cache1[cache1position];
+        cache1[cache1position] = cache2[cache2position];
+        cache2[cache2position] = aux;
     } else {
-        aux = cache1[cache1Position];
-        cache1[cache1Position] = cache2[cache2Position];
-        cache2[cache2Position] = aux;
+        cache1[cache1position] = cache2[cache2position];
     }
-    cache1[cache1Position].cost = cost;
-    return cache1[cache1Position];
+    cache1[cache1position].sec = sec;
+
+    cache1[cache1position].cost = cost;
+    return cache1[cache1position];
 }
 
-int LRU(int sizeCache, MemoryBlock *cache) {
+int getOldestPosition(int sizeCache, MemoryBlock *cache) {
     time_t oldestTime;
     time(&oldestTime);
     int position;
 
-    if (sizeCache == sizeCache1) {
-    }
-    if (sizeCache == sizeCache2) {
-    }
-    if (sizeCache == sizeCache3) {
-        for (int i = 0; i < sizeCache3; i++) {
-            if (cache[i].sec < oldestTime) {
-                oldestTime = cache[i].sec;
-                position = i;
-            }
+    for (int i = 0; i < sizeCache; i++) {
+        if (cache[i].sec < oldestTime) {
+            oldestTime = cache[i].sec;
+            position = i;
         }
     }
+
+    // if (sizeCache == sizeCache1) {
+    //     for (int i = 0; i < sizeCache1; i++) {
+    //         if (cache[i].sec < oldestTime) {
+    //             oldestTime = cache[i].sec;
+    //             position = i;
+    //         }
+    //     }
+    // }
+    // if (sizeCache == sizeCache2) {
+    //     for (int i = 0; i < sizeCache2; i++) {
+    //         if (cache[i].sec < oldestTime) {
+    //             oldestTime = cache[i].sec;
+    //             position = i;
+    //         }
+    //     }
+    // }
+    // if (sizeCache == sizeCache3) {
+    //     for (int i = 0; i < sizeCache3; i++) {
+    //         if (cache[i].sec < oldestTime) {
+    //             oldestTime = cache[i].sec;
+    //             position = i;
+    //         }
+    //     }
+    // }
     return position;
 }
