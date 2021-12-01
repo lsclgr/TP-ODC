@@ -1,9 +1,23 @@
-#include "instructionGenerator.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#define N_INST 10000
+#define N_FOR 5
+#define N_MEM 1000
+#define N_PROB 50
+#define N_OPCODE 4
+
+int rep[5][7];
+int inst[10000][7];
+
+void instGenerator();
+
+int main() {
+    instGenerator();
+    return 0;
+}
 
 void instGenerator() {
     FILE *arquivo = fopen("instrucoes.txt", "w");
