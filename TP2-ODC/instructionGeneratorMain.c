@@ -8,6 +8,7 @@
 #define N_MEM 1000
 #define N_PROB 50
 #define N_OPCODE 4
+#define N_WORD 4
 
 int rep[5][7];
 int inst[10000][7];
@@ -28,8 +29,9 @@ void instGenerator() {
     for (int i = 0; i < N_FOR; i++) {
         random = rand() % N_OPCODE;
         rep[i][0] = random;
-        for (int j = 1; j <= instruc[random]; j++) {
+        for (int j = 1; j <= instruc[random]; j += 2) {
             rep[i][j] = rand() % N_MEM;
+            rep[i][j + 1] = rand() % N_WORD;
             printf("%d ", rep[i][j]);
         }
         printf("\n");
@@ -52,8 +54,9 @@ void instGenerator() {
         } else {
             random = rand() % N_OPCODE;
             rep[i][0] = random;
-            for (int j = 1; j <= instruc[random]; j++) {
+            for (int j = 1; j <= instruc[random]; j += 2) {
                 inst[i][j] = rand() % N_MEM;
+                rep[i][j + 1] = rand() % N_WORD;
             }
             i++;
         }
