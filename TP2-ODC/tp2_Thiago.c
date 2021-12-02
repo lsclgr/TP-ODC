@@ -30,16 +30,22 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
     int hitC2 = 0;
     int missC3 = 0;
     int hitC3 = 0;
+    MemoryBlock memoryDataAdd1;
+
+    MemoryBlock memoryDataAdd2;
+
+    MemoryBlock memoryDataAdd3;
+    Instruction inst;
 
     while (opcode != -1) {
-        Instruction inst = instruction[PC];
+        inst = instruction[PC];
         opcode = inst.opcode;
         if (opcode != -1) {
-            MemoryBlock memoryDataAdd1 =
+            memoryDataAdd1 =
                 searchInMemories(inst.add1, RAM, cache1, cache2, cache3);
-            MemoryBlock memoryDataAdd2 =
+            memoryDataAdd2 =
                 searchInMemories(inst.add2, RAM, cache1, cache2, cache3);
-            MemoryBlock memoryDataAdd3 =
+            memoryDataAdd3 =
                 searchInMemories(inst.add3, RAM, cache1, cache2, cache3);
 
             cost += memoryDataAdd1.cost;
@@ -103,7 +109,11 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
                 /* code */
                 break;
             case 1:
-                /* code */
+                int content1 = memoryDataAdd1.words[(int)inst.add1.addWord];
+                int content2 = memoryDataAdd2.words[(int)inst.add2.addWord];
+                int sum = content1 + content1;
+                memoryDataAdd3.words[(int)inst.add3.addWord] = sum;
+
                 break;
             case 2:
                 /* code */

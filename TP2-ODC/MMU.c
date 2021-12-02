@@ -30,7 +30,6 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
     cost += 100;
     for (int i = 0; i < sizeCache2; i++) {
         if (cache2[i].addBlock == add.addBlock) {
-            // pq ele não colocou o custo?
             cache2[i].cacheHit = 2;
             // cache2[cache2Position].updated = true
             return cachesTest(i, cache1, cache2, cache3, cost, 1);
@@ -40,7 +39,6 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
     cost += 1000;
     for (int i = 0; i < sizeCache3; i++) {
         if (cache3[i].addBlock == add.addBlock) {
-            // pq ele não colocou o custo?
             cache3[i].cacheHit = 3;
             // cache3[cache3Position].updated = true
             return cachesTest(i, cache1, cache2, cache3, cost, 0);
@@ -53,14 +51,16 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
         if (!cache3[i].updated) {
             cache3[i] = RAM[(int)add.addBlock];
             cache3[i].cacheHit = 4;
+            cache3[i].sec = sec;
+
             return cachesTest(i, cache1, cache2, cache3, cost, 0);
         }
     }
 
     int cache3Position = getOldestPosition(sizeCache3, cache3);
 
-    // RAM[cache3[cache3Position].addBlock] = cache3[cache3Position];
-    // RAM[cache3[cache3Position].addBlock].updated = false;  // virar false
+    RAM[cache3[cache3Position].addBlock] = cache3[cache3Position];
+    RAM[cache3[cache3Position].addBlock].updated = false;  // virar false
 
     cache3[cache3Position] = RAM[(int)add.addBlock];
     cache3[cache3Position].cacheHit = 4;
