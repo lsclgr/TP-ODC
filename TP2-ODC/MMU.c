@@ -108,7 +108,7 @@ MemoryBlock cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
     } else {
         cache1[cache1position] = cache2[cache2position];
     }
-    
+
     cache1[cache1position].sec = sec;
 
     cache1[cache1position].cost = cost;
@@ -126,30 +126,5 @@ int getOldestPosition(int sizeCache, MemoryBlock *cache) {
             position = i;
         }
     }
-
-    // if (sizeCache == sizeCache1) {
-    //     for (int i = 0; i < sizeCache1; i++) {
-    //         if (cache[i].sec < oldestTime) {
-    //             oldestTime = cache[i].sec;
-    //             position = i;
-    //         }
-    //     }
-    // }
-    // if (sizeCache == sizeCache2) {
-    //     for (int i = 0; i < sizeCache2; i++) {
-    //         if (cache[i].sec < oldestTime) {
-    //             oldestTime = cache[i].sec;
-    //             position = i;
-    //         }
-    //     }
-    // }
-    // if (sizeCache == sizeCache3) {
-    //     for (int i = 0; i < sizeCache3; i++) {
-    //         if (cache[i].sec < oldestTime) {
-    //             oldestTime = cache[i].sec;
-    //             position = i;
-    //         }
-    //     }
-    // }
     return position;
 }
