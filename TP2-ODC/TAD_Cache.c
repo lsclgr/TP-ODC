@@ -9,6 +9,7 @@ MemoryBlock *createRAM(MemoryBlock *RAM) {
     for (int i = 0; i < sizeRAM; i++) {
         RAM->addBlock = i;
         RAM->updated = false;
+        RAM->isEmpty = true;
         RAM->cost = 0;
         RAM->cacheHit = 0;
         for (int j = 0; j < 4; j++) {
@@ -23,6 +24,7 @@ MemoryBlock *createEmptyCache(int size, MemoryBlock *cache) {
     for (int i = 0; i < size; i++) {
         cache->addBlock = MIN_VALUE;
         cache->updated = false;
+        cache->isEmpty = true;
         cache->cost = 0;
         cache->cacheHit = 0;
     }
@@ -34,6 +36,7 @@ MemoryBlock *createCacheWithData(int size, MemoryBlock *cache) {
     for (int i = 0; i < size; i++) {
         cache->addBlock = MIN_VALUE;
         cache->updated = false;
+        cache->isEmpty = true;
         cache->cost = 0;
         cache->cacheHit = 0;
         for (int j = 0; j < 4; j++) {

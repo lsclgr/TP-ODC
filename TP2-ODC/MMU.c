@@ -48,7 +48,7 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
     cost += 10000;
     for (int i = 0; i < sizeCache3; i++) {
         // buscar na RAM E O REPASSAR A C3 E DEPOIS A C2 E DEPOIS A C1
-        if (!cache3[i].updated) {
+        if ((!cache3[i].updated) && cache3[i].isEmpty) {
             cache3[i] = RAM[(int)add.addBlock];
             cache3[i].cacheHit = 4;
             cache3[i].sec = sec;
@@ -61,6 +61,7 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
 
     RAM[cache3[cache3Position].addBlock] = cache3[cache3Position];
     RAM[cache3[cache3Position].addBlock].updated = false;  // virar false
+    RAM[cache3[cache3Position].addBlock].isEmpty = false;  // virar false
 
     cache3[cache3Position] = RAM[(int)add.addBlock];
     cache3[cache3Position].cacheHit = 4;
@@ -76,7 +77,7 @@ MemoryBlock cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
 
     if (!isCache2) {
         for (int j = 0; j < sizeCache2; j++) {
-            if (!cache2[j].updated) {
+            if ((!cache2[j].updated) && cache2[j].isEmpty) {
                 cache2position = j;
                 verify = 1;
             }
@@ -94,7 +95,7 @@ MemoryBlock cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
 
     verify = 0;
     for (int j = 0; j < sizeCache1; j++) {
-        if (!cache1[j].updated) {
+        if ((!cache1[j].updated) && cache1[j].isEmpty) {
             cache1position = j;
             verify = 1;
         }

@@ -23,6 +23,7 @@ typedef struct {
     int cost;
     int cacheHit;
     int sec;
+    bool isEmpty;
 } MemoryBlock;
 
 typedef struct {
