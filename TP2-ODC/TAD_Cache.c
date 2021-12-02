@@ -7,13 +7,13 @@
 MemoryBlock *createRAM(MemoryBlock *RAM) {
     RAM = (MemoryBlock *)malloc(sizeRAM * sizeof(MemoryBlock));
     for (int i = 0; i < sizeRAM; i++) {
-        RAM->addBlock = i;
-        RAM->updated = false;
-        RAM->isEmpty = true;
-        RAM->cost = 0;
-        RAM->cacheHit = 0;
+        RAM[i].addBlock = i;
+        RAM[i].updated = false;
+        RAM[i].isEmpty = true;
+        RAM[i].cost = 0;
+        RAM[i].cacheHit = 0;
         for (int j = 0; j < 4; j++) {
-            RAM->words[j] = rand() % 1000000;
+            RAM[i].words[j] = rand() % 1000000;
         }
     }
     return RAM;
@@ -22,11 +22,11 @@ MemoryBlock *createRAM(MemoryBlock *RAM) {
 MemoryBlock *createEmptyCache(int size, MemoryBlock *cache) {
     cache = (MemoryBlock *)malloc(size * sizeof(MemoryBlock));
     for (int i = 0; i < size; i++) {
-        cache->addBlock = MIN_VALUE;
-        cache->updated = false;
-        cache->isEmpty = true;
-        cache->cost = 0;
-        cache->cacheHit = 0;
+        cache[i].addBlock = MIN_VALUE;
+        cache[i].updated = false;
+        cache[i].isEmpty = true;
+        cache[i].cost = 0;
+        cache[i].cacheHit = 0;
     }
     return cache;
 }
@@ -34,13 +34,13 @@ MemoryBlock *createEmptyCache(int size, MemoryBlock *cache) {
 MemoryBlock *createCacheWithData(int size, MemoryBlock *cache) {
     cache = (MemoryBlock *)malloc(size * sizeof(MemoryBlock));
     for (int i = 0; i < size; i++) {
-        cache->addBlock = MIN_VALUE;
-        cache->updated = false;
-        cache->isEmpty = true;
-        cache->cost = 0;
-        cache->cacheHit = 0;
+        cache[i].addBlock = MIN_VALUE;
+        cache[i].updated = false;
+        cache[i].isEmpty = true;
+        cache[i].cost = 0;
+        cache[i].cacheHit = 0;
         for (int j = 0; j < 4; j++) {
-            cache->words[j] = rand() % 1000000;
+            cache[i].words[j] = rand() % 1000000;
         }
     }
     return cache;

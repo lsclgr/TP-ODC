@@ -12,7 +12,7 @@
 #define MIN_VALUE -2147483648
 
 typedef struct {
-    double addBlock;
+    int addBlock;
     double addWord;
 
 } Address;
@@ -21,7 +21,7 @@ typedef struct {
     double words[4];
     int addBlock;
     bool updated;
-    int cost;
+    long long int cost;
     int cacheHit;
     int sec;
     bool isEmpty;
