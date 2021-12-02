@@ -52,49 +52,67 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
             cost += memoryDataAdd2.cost;
             cost += memoryDataAdd3.cost;
 
-            if (memoryDataAdd1.cacheHit == 1) {
-                hitC1++;
-            } else if (memoryDataAdd1.cacheHit == 2) {
-                missC1++;
-                hitC2++;
-            } else if (memoryDataAdd1.cacheHit == 3) {
-                missC1++;
-                missC2++;
-                hitC3++;
-            } else {
-                missC1++;
-                missC2++;
-                missC3++;
+            switch (memoryDataAdd1.cacheHit) {
+                case 1:
+                    hitC1++;
+                    break;
+                case 2:
+                    missC1++;
+                    hitC2++;
+                    break;
+                case 3:
+                    missC1++;
+                    missC2++;
+                    hitC3++;
+                    break;
+
+                default:
+                    missC1++;
+                    missC2++;
+                    missC3++;
+                    break;
             }
 
-            if (memoryDataAdd2.cacheHit == 1) {
-                hitC1++;
-            } else if (memoryDataAdd2.cacheHit == 2) {
-                missC1++;
-                hitC2++;
-            } else if (memoryDataAdd2.cacheHit == 3) {
-                missC1++;
-                missC2++;
-                hitC3++;
-            } else {
-                missC1++;
-                missC2++;
-                missC3++;
+            switch (memoryDataAdd2.cacheHit) {
+                case 1:
+                    hitC1++;
+                    break;
+                case 2:
+                    missC1++;
+                    hitC2++;
+                    break;
+                case 3:
+                    missC1++;
+                    missC2++;
+                    hitC3++;
+                    break;
+
+                default:
+                    missC1++;
+                    missC2++;
+                    missC3++;
+                    break;
             }
 
-            if (memoryDataAdd3.cacheHit == 1) {
-                hitC1++;
-            } else if (memoryDataAdd3.cacheHit == 2) {
-                missC1++;
-                hitC2++;
-            } else if (memoryDataAdd3.cacheHit == 3) {
-                missC1++;
-                missC2++;
-                hitC3++;
-            } else {
-                missC1++;
-                missC2++;
-                missC3++;
+            switch (memoryDataAdd3.cacheHit) {
+                case 1:
+                    hitC1++;
+                    break;
+                case 2:
+                    missC1++;
+                    hitC2++;
+                    break;
+                case 3:
+                    missC1++;
+                    missC2++;
+                    hitC3++;
+                    break;
+
+                default:
+                    missC1++;
+                    missC2++;
+                    missC3++;
+                    break;
             }
 
             printf("Custo até o momento do programa em execução: %d\n", cost);
