@@ -14,6 +14,7 @@
 typedef struct {
     double addBlock;
     double addWord;
+
 } Address;
 
 typedef struct {
