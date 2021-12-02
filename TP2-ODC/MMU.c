@@ -108,6 +108,7 @@ MemoryBlock cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
     } else {
         cache1[cache1position] = cache2[cache2position];
     }
+    
     cache1[cache1position].sec = sec;
 
     cache1[cache1position].cost = cost;
