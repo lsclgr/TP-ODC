@@ -12,4 +12,7 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock*,
 void randomInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
                         MemoryBlock* cache2, MemoryBlock* cache3);
 
+void generatorInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
+                           MemoryBlock* cache2, MemoryBlock* cache3);
+
 #endif

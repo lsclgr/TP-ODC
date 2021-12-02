@@ -13,12 +13,12 @@
 
 typedef struct {
     int addBlock;
-    double addWord;
+    int addWord;
 
 } Address;
 
 typedef struct {
-    double words[4];
+    int words[4];
     int addBlock;
     bool updated;
     long long int cost;

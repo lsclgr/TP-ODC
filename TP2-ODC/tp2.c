@@ -17,7 +17,8 @@ int main() {
     cache2 = createCacheWithData(sizeCache2, cache2);
     cache3 = createCacheWithData(sizeCache3, cache3);
 
-    randomInstructions(RAM, cache1, cache2, cache3);
+    // randomInstructions(RAM, cache1, cache2, cache3);
+    generatorInstructions(RAM, cache1, cache2, cache3);
 
     return 0;
 }
