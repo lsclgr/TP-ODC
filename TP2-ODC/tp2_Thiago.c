@@ -6,6 +6,9 @@
 #include "MMU.h"
 #include "TAD_Cache.h"
 
+void setCache(MemoryBlock memoryData, MemoryBlock* RAM, MemoryBlock* cache1,
+              MemoryBlock* cache2, MemoryBlock* cache3);
+
 void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock*,
              MemoryBlock*, MemoryBlock*);
 
@@ -124,21 +127,120 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
 
         switch (opcode) {
             case 0:
-                /* code */
+                MemoryBlock memoryData;
+                memoryData.addBlock = inst.add1.addBlock;
+                memoryData.words[0] = inst.add1.addWord;
+                memoryData.updated = true;
+                memoryData.isEmpty = true;
+                memoryData.cost = 0;
+                memoryData.cacheHit = 0;
+                setCache(memoryData, RAM, cache1, cache2, cache3);
                 break;
             case 1:
                 int content1 = memoryDataAdd1.words[(int)inst.add1.addWord];
                 int content2 = memoryDataAdd2.words[(int)inst.add2.addWord];
                 int sum = content1 + content1;
                 memoryDataAdd3.words[(int)inst.add3.addWord] = sum;
+                memoryDataAdd3.updated = true;
+                setCache(memoryDataAdd3, RAM, cache1, cache2, cache3);
 
+                printf("Somando %d com %d e gerando %d\n", content1, content2, sum);
                 break;
             case 2:
-                /* code */
+                int content1 = memoryDataAdd1.words[(int)inst.add1.addWord];
+                int content2 = memoryDataAdd2.words[(int)inst.add2.addWord];
+                int sub = content1 + content1;
+                memoryDataAdd3.words[(int)inst.add3.addWord] = sub;
+                memoryDataAdd3.updated = true;
+                setCache(memoryDataAdd3, RAM, cache1, cache2, cache3);
+
+                printf("Subtraindo %d com %d e gerando %d\n", content1, content2, sub);
+                break;
+            case 3:
+                instruction[PC].add1.addWord = memoryDataAdd1.words[0];
                 break;
             default:
                 break;
         }
         PC++;
     }
+}
+
+void setCache(MemoryBlock memoryData, MemoryBlock* RAM, MemoryBlock* cache1,
+              MemoryBlock* cache2, MemoryBlock* cache3) {
+    int verify = 0, cache1position, cache2position, cache3position;
+    MemoryBlock aux;
+
+    for (int j = 0; j < sizeCache1; j++) {
+        if ((!cache1[j].updated) && cache1[j].isEmpty) {
+            cache1position = j;
+            verify = 1;
+        }
+    }
+    if (verify) {
+        cache1[cache1position] = memoryData;
+        return;
+    } else {
+        cache1position = getOldestPosition(sizeCache1, cache1);
+        verify = 0;
+        for (int j = 0; j < sizeCache2; j++) {
+            if ((!cache2[j].updated) && cache2[j].isEmpty) {
+                cache2position = j;
+                verify = 1;
+            }
+        }
+        if (verify) {
+            cache2[cache2position] = cache1[cache1position];
+            cache1[cache1position] = memoryData;
+            return;
+        } else {
+            cache2position = getOldestPosition(sizeCache2, cache2);
+            verify = 0;
+            for (int j = 0; j < sizeCache3; j++) {
+                if ((!cache3[j].updated) && cache3[j].isEmpty) {
+                    cache3position = j;
+                    verify = 1;
+                }
+            }
+            if (verify) {
+                cache3[cache3position] = cache2[cache2position];
+                cache2[cache2position] = cache1[cache1position];
+                cache1[cache1position] = memoryData;
+                return;
+            } else {
+                RAM[cache3[cache3position].addBlock] = cache3[cache3position];
+                RAM[cache3[cache3position].addBlock].updated = false;  // virar false
+                RAM[cache3[cache3position].addBlock].isEmpty = false;  // virar false
+                cache3[cache3position] = cache2[cache2position];
+                cache2[cache2position] = cache1[cache1position];
+                cache1[cache1position] = memoryData;
+                return;
+            }
+        }
+    }
+}
+
+void randomInstructions() {
+    Instruction *instruction, inst;
+
+    instruction = malloc(1001 * sizeof(Instruction));
+
+    srand(time(NULL));
+    int r;
+
+    for (int i = 0; i < 1000; i++) {
+        inst.opcode = rand() % 4;
+        inst.add1.addBlock = rand() % 1000;
+        inst.add1.addWord = rand() % 4;
+
+        inst.add2.addBlock = rand() % 1000;
+        inst.add2.addWord = rand() % 4;
+
+        inst.add3.addBlock = rand() % 1000;
+        inst.add3.addWord = rand() % 4;
+
+        instruction[i] = inst;
+    }
+
+    instruction[1000].opcode = -1;
 }
