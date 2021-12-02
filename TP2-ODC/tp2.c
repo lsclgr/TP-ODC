@@ -12,11 +12,20 @@ void setCache(MemoryBlock memoryData, MemoryBlock* RAM, MemoryBlock* cache1,
 void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock*,
              MemoryBlock*, MemoryBlock*);
 
+void randomInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
+                        MemoryBlock* cache2, MemoryBlock* cache3);
+
 int main() {
     MemoryBlock *RAM, *cache1, *cache2, *cache3;
 
-    int ram;
     srand(time(NULL));
+
+    RAM = createRAM(RAM);
+    cache1 = createCacheWithData(sizeCache1, cache1);
+    cache2 = createCacheWithData(sizeCache2, cache2);
+    cache3 = createCacheWithData(sizeCache3, cache3);
+
+    randomInstructions(RAM, cache1, cache2, cache3);
 
     return 0;
 }
@@ -33,6 +42,8 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
     int hitC2 = 0;
     int missC3 = 0;
     int hitC3 = 0;
+    int content1, content2;
+    MemoryBlock memoryData;
     MemoryBlock memoryDataAdd1;
 
     MemoryBlock memoryDataAdd2;
@@ -127,7 +138,7 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
 
         switch (opcode) {
             case 0:
-                MemoryBlock memoryData;
+
                 memoryData.addBlock = inst.add1.addBlock;
                 memoryData.words[0] = inst.add1.addWord;
                 memoryData.updated = true;
@@ -137,8 +148,8 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
                 setCache(memoryData, RAM, cache1, cache2, cache3);
                 break;
             case 1:
-                int content1 = memoryDataAdd1.words[(int)inst.add1.addWord];
-                int content2 = memoryDataAdd2.words[(int)inst.add2.addWord];
+                content1 = memoryDataAdd1.words[(int)inst.add1.addWord];
+                content2 = memoryDataAdd2.words[(int)inst.add2.addWord];
                 int sum = content1 + content1;
                 memoryDataAdd3.words[(int)inst.add3.addWord] = sum;
                 memoryDataAdd3.updated = true;
@@ -147,8 +158,8 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
                 printf("Somando %d com %d e gerando %d\n", content1, content2, sum);
                 break;
             case 2:
-                int content1 = memoryDataAdd1.words[(int)inst.add1.addWord];
-                int content2 = memoryDataAdd2.words[(int)inst.add2.addWord];
+                content1 = memoryDataAdd1.words[(int)inst.add1.addWord];
+                content2 = memoryDataAdd2.words[(int)inst.add2.addWord];
                 int sub = content1 + content1;
                 memoryDataAdd3.words[(int)inst.add3.addWord] = sub;
                 memoryDataAdd3.updated = true;
@@ -169,7 +180,6 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
 void setCache(MemoryBlock memoryData, MemoryBlock* RAM, MemoryBlock* cache1,
               MemoryBlock* cache2, MemoryBlock* cache3) {
     int verify = 0, cache1position, cache2position, cache3position;
-    MemoryBlock aux;
 
     for (int j = 0; j < sizeCache1; j++) {
         if ((!cache1[j].updated) && cache1[j].isEmpty) {
@@ -220,13 +230,13 @@ void setCache(MemoryBlock memoryData, MemoryBlock* RAM, MemoryBlock* cache1,
     }
 }
 
-void randomInstructions() {
+void randomInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
+                        MemoryBlock* cache2, MemoryBlock* cache3) {
     Instruction *instruction, inst;
 
     instruction = malloc(1001 * sizeof(Instruction));
 
     srand(time(NULL));
-    int r;
 
     for (int i = 0; i < 1000; i++) {
         inst.opcode = rand() % 4;
@@ -243,4 +253,5 @@ void randomInstructions() {
     }
 
     instruction[1000].opcode = -1;
+    machine(instruction, RAM, cache1, cache2, cache3);
 }

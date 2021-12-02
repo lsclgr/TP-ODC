@@ -8,5 +8,6 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
 MemoryBlock cachesTest(int, MemoryBlock *, MemoryBlock *,
                        MemoryBlock *, int, int);
 int LRU(int sizeCache);
+int getOldestPosition(int sizeCache, MemoryBlock *cache);
 
 #endif
