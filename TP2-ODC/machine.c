@@ -23,9 +23,7 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
     int content1, content2, sum, sub;
     MemoryBlock memoryData;
     MemoryBlock memoryDataAdd1;
-
     MemoryBlock memoryDataAdd2;
-
     MemoryBlock memoryDataAdd3;
     Instruction inst;
 
@@ -122,11 +120,14 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
                 // printf("\nsegmentacao case 0\n");
                 memoryData.addBlock = inst.add1.addBlock;
                 memoryData.words[0] = inst.add1.addWord;
+                memoryData.words[1] = inst.add1.addWord;
+                memoryData.words[2] = inst.add1.addWord;
+                memoryData.words[3] = inst.add1.addWord;
                 memoryData.updated = true;
                 memoryData.isEmpty = true;
                 memoryData.cost = 0;
                 memoryData.cacheHit = 0;
-                // setCache(memoryData, RAM, cache1, cache2, cache3);
+                setCache(memoryData, RAM, cache1, cache2, cache3);
                 break;
             case 1:
                 // printf("\nsegmentacao case 1\n");
@@ -137,7 +138,7 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
                 sum = content1 + content2;
                 memoryDataAdd3.words[inst.add3.addWord] = sum;
                 memoryDataAdd3.updated = true;
-                // setCache(memoryDataAdd3, RAM, cache1, cache2, cache3);
+                setCache(memoryDataAdd3, RAM, cache1, cache2, cache3);
 
                 printf("Somando %d com %d e gerando %d\n", content1, content2,
                        sum);
@@ -149,7 +150,7 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
                 sub = content1 - content2;
                 memoryDataAdd3.words[inst.add3.addWord] = sub;
                 memoryDataAdd3.updated = true;
-                // setCache(memoryDataAdd3, RAM, cache1, cache2, cache3);
+                setCache(memoryDataAdd3, RAM, cache1, cache2, cache3);
 
                 printf("Subtraindo %d com %d e gerando %d\n", content1,
                        content2, sub);

@@ -20,6 +20,8 @@ MemoryBlock *createRAM(MemoryBlock *RAM) {
 }
 
 MemoryBlock *createEmptyCache(int size, MemoryBlock *cache) {
+    time_t sec;
+    time(&sec);
     cache = (MemoryBlock *)malloc(size * sizeof(MemoryBlock));
     for (int i = 0; i < size; i++) {
         cache[i].addBlock = MIN_VALUE;
@@ -27,11 +29,14 @@ MemoryBlock *createEmptyCache(int size, MemoryBlock *cache) {
         cache[i].isEmpty = true;
         cache[i].cost = 0;
         cache[i].cacheHit = 0;
+        cache[i].sec = sec;
     }
     return cache;
 }
 
 MemoryBlock *createCacheWithData(int size, MemoryBlock *cache) {
+    time_t sec;
+    time(&sec);
     cache = (MemoryBlock *)malloc(size * sizeof(MemoryBlock));
     for (int i = 0; i < size; i++) {
         cache[i].addBlock = MIN_VALUE;
@@ -39,6 +44,7 @@ MemoryBlock *createCacheWithData(int size, MemoryBlock *cache) {
         cache[i].isEmpty = true;
         cache[i].cost = 0;
         cache[i].cacheHit = 0;
+        cache[i].sec = sec;
         for (int j = 0; j < 4; j++) {
             cache[i].words[j] = rand() % 1000000;
         }
