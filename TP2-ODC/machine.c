@@ -21,7 +21,6 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
     int missC3 = 0;
     int hitC3 = 0;
     int content1, content2, sum, sub, indexAdd1, indexAdd2, indexAdd3;
-    MemoryBlock memoryData;
     MemoryBlock memoryDataAdd1;
     MemoryBlock memoryDataAdd2;
     MemoryBlock memoryDataAdd3;
@@ -29,6 +28,9 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
 
     while (opcode != -1) {
         inst = instruction[PC];
+        // if (PC == 50) {
+        //     exit(1);
+        // }
         printf("\nposicao PC %d\n", PC);
         printf(
             "\nOPCODE: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d "

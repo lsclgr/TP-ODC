@@ -52,7 +52,7 @@ int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
             cache3[i] = RAM[(int)add.addBlock];
             cache3[i].cacheHit = 4;
             cache3[i].sec = sec;
-            printf("\n55\n");
+            // printf("\n55\n");
 
             return cachesTest(i, cache1, cache2, cache3, cost, 0);
         }
@@ -89,13 +89,10 @@ int cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
         if (verify == 0) {
             cache2position = getOldestPosition(sizeCache2, cache2);
             printf("\ncache 2 position %d\n", cache2position);
-            aux = cache2[cache2position];
-            cache2[cache2position] = cache3[i];
-            cache3[i] = aux;
-        } else {
-            cache2[cache2position] = cache3[i];
-            printf("95 \n");
         }
+        aux = cache2[cache2position];
+        cache2[cache2position] = cache3[i];
+        cache3[i] = aux;
         cache2[cache2position].sec = sec;
     } else {
         cache2position = i;
@@ -113,12 +110,10 @@ int cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
         cache1position = getOldestPosition(sizeCache1, cache1);
         printf("\ncache 1 position %d\n", cache1position);
         printf("cache 2 position %d\n", cache2position);
-        aux = cache1[cache1position];
-        cache1[cache1position] = cache2[cache2position];
-        cache2[cache2position] = aux;
-    } else {
-        cache1[cache1position] = cache2[cache2position];
     }
+    aux = cache1[cache1position];
+    cache1[cache1position] = cache2[cache2position];
+    cache2[cache2position] = aux;
 
     cache1[cache1position].sec = sec;
 
@@ -134,7 +129,7 @@ int getOldestPosition(int sizeCache, MemoryBlock *cache) {
     printf("\n\n size cache: %d\n", sizeCache);
     for (int i = 1; i < sizeCache; i++) {
         // printf("\n i dentro do for: %d\n", i);
-        printf("cache[%d].sec %ld \n", i, oldestTime);
+        // printf("cache[%d].sec %ld \n", i, oldestTime);
         if (cache[i].sec < oldestTime) {
             oldestTime = cache[i].sec;
             position = i;
