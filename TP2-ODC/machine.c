@@ -128,17 +128,21 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
         switch (opcode) {
             case 0:
                 // printf("\nsegmentacao case 0\n");
-                memoryData.addBlock = inst.add1.addBlock;
-                memoryData.words[0] = inst.add1.addWord;
-                memoryData.words[1] = inst.add1.addWord;
-                memoryData.words[2] = inst.add1.addWord;
-                memoryData.words[3] = inst.add1.addWord;
-                memoryData.updated = true;
-                memoryData.isEmpty = true;
-                memoryData.cost = 0;
-                memoryData.cacheHit = 0;
-                
-                //setCache(memoryData, RAM, cache1, cache2, cache3);
+                // memoryData.addBlock = inst.add1.addBlock;
+                // memoryData.words[0] = inst.add1.addWord;
+                // memoryData.words[1] = inst.add1.addWord;
+                // memoryData.words[2] = inst.add1.addWord;
+                // memoryData.words[3] = inst.add1.addWord;
+                // memoryData.updated = true;
+                // memoryData.isEmpty = true;
+                // memoryData.cost = 0;
+                // memoryData.cacheHit = 0;
+
+                memoryDataAdd3.words[inst.add3.addWord] = inst.add3.addWord;
+                memoryDataAdd3.updated = true;
+                cache1[indexAdd3] = memoryDataAdd3;
+
+                // setCache(memoryData, RAM, cache1, cache2, cache3);
                 break;
             case 1:
                 // printf("\nsegmentacao case 1\n");
@@ -149,10 +153,11 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
                 sum = content1 + content2;
                 memoryDataAdd3.words[inst.add3.addWord] = sum;
                 memoryDataAdd3.updated = true;
-                setCache(memoryDataAdd3, RAM, cache1, cache2, cache3);
+                cache1[indexAdd3] = memoryDataAdd3;
+                // setCache(memoryDataAdd3, RAM, cache1, cache2, cache3);
 
                 printf("Somando %d com %d e gerando %d\n", content1, content2,
-                       sum);
+                       cache1[indexAdd3].words[inst.add3.addWord]);
                 break;
             case 2:
                 // printf("\nsegmentacao case 2\n");
@@ -161,7 +166,8 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
                 sub = content1 - content2;
                 memoryDataAdd3.words[inst.add3.addWord] = sub;
                 memoryDataAdd3.updated = true;
-                setCache(memoryDataAdd3, RAM, cache1, cache2, cache3);
+                cache1[indexAdd3] = memoryDataAdd3;
+                // setCache(memoryDataAdd3, RAM, cache1, cache2, cache3);
 
                 printf("Subtraindo %d com %d e gerando %d\n", content1,
                        content2, sub);
@@ -177,66 +183,66 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
     }
 }
 
-void setCache(MemoryBlock memoryData, MemoryBlock* RAM, MemoryBlock* cache1,
-              MemoryBlock* cache2, MemoryBlock* cache3) {
-    int verify = 0, cache1position, cache2position, cache3position;
-    // printf("\n167\n");
-    for (int j = 0; j < sizeCache1; j++) {
-        if ((!cache1[j].updated) && cache1[j].isEmpty) {
-            cache1position = j;
-            verify = 1;
-        }
-    }
-    // printf("\n174\n");
-    if (verify == 1) {
-        cache1[cache1position] = memoryData;
-        return;
-    } else {
-        cache1position = getOldestPosition(sizeCache1, cache1);
-        printf("\ncache 1 position %d\n", cache1[cache1position].addBlock);
-        verify = 0;
-        for (int j = 0; j < sizeCache2; j++) {
-            if ((!cache2[j].updated) && cache2[j].isEmpty) {
-                cache2position = j;
-                verify = 1;
-            }
-        }
-        if (verify == 1) {
-            cache2[cache2position] = cache1[cache1position];
-            cache1[cache1position] = memoryData;
-            return;
-        } else {
-            cache2position = getOldestPosition(sizeCache2, cache2);
-            printf("\ncache 2 position %d\n", cache2[cache2position].addBlock);
-            verify = 0;
-            for (int j = 0; j < sizeCache3; j++) {
-                if ((!cache3[j].updated) && cache3[j].isEmpty) {
-                    cache3position = j;
-                    verify = 1;
-                }
-            }
-            if (verify == 1) {
-                cache3[cache3position] = cache2[cache2position];
-                cache2[cache2position] = cache1[cache1position];
-                cache1[cache1position] = memoryData;
-                return;
-            } else {
-                cache3position = getOldestPosition(sizeCache3, cache3);
-                printf("\ncache 3 position %d\n",
-                       cache3[cache3position].addBlock);
-                RAM[cache3[cache3position].addBlock] = cache3[cache3position];
-                RAM[cache3[cache3position].addBlock].updated =
-                    false;  // virar false
-                RAM[cache3[cache3position].addBlock].isEmpty =
-                    false;  // virar false
-                cache3[cache3position] = cache2[cache2position];
-                cache2[cache2position] = cache1[cache1position];
-                cache1[cache1position] = memoryData;
-                return;
-            }
-        }
-    }
-}
+// void setCache(MemoryBlock memoryData, MemoryBlock* RAM, MemoryBlock* cache1,
+//               MemoryBlock* cache2, MemoryBlock* cache3) {
+//     int verify = 0, cache1position, cache2position, cache3position;
+//     // printf("\n167\n");
+//     for (int j = 0; j < sizeCache1; j++) {
+//         if ((!cache1[j].updated) && cache1[j].isEmpty) {
+//             cache1position = j;
+//             verify = 1;
+//         }
+//     }
+//     // printf("\n174\n");
+//     if (verify == 1) {
+//         cache1[cache1position] = memoryData;
+//         return;
+//     } else {
+//         cache1position = getOldestPosition(sizeCache1, cache1);
+//         printf("\ncache 1 position %d\n", cache1[cache1position].addBlock);
+//         verify = 0;
+//         for (int j = 0; j < sizeCache2; j++) {
+//             if ((!cache2[j].updated) && cache2[j].isEmpty) {
+//                 cache2position = j;
+//                 verify = 1;
+//             }
+//         }
+//         if (verify == 1) {
+//             cache2[cache2position] = cache1[cache1position];
+//             cache1[cache1position] = memoryData;
+//             return;
+//         } else {
+//             cache2position = getOldestPosition(sizeCache2, cache2);
+//             printf("\ncache 2 position %d\n", cache2[cache2position].addBlock);
+//             verify = 0;
+//             for (int j = 0; j < sizeCache3; j++) {
+//                 if ((!cache3[j].updated) && cache3[j].isEmpty) {
+//                     cache3position = j;
+//                     verify = 1;
+//                 }
+//             }
+//             if (verify == 1) {
+//                 cache3[cache3position] = cache2[cache2position];
+//                 cache2[cache2position] = cache1[cache1position];
+//                 cache1[cache1position] = memoryData;
+//                 return;
+//             } else {
+//                 cache3position = getOldestPosition(sizeCache3, cache3);
+//                 printf("\ncache 3 position %d\n",
+//                        cache3[cache3position].addBlock);
+//                 RAM[cache3[cache3position].addBlock] = cache3[cache3position];
+//                 RAM[cache3[cache3position].addBlock].updated =
+//                     false;  // virar false
+//                 RAM[cache3[cache3position].addBlock].isEmpty =
+//                     false;  // virar false
+//                 cache3[cache3position] = cache2[cache2position];
+//                 cache2[cache2position] = cache1[cache1position];
+//                 cache1[cache1position] = memoryData;
+//                 return;
+//             }
+//         }
+//     }
+// }
 
 void randomInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
                         MemoryBlock* cache2, MemoryBlock* cache3) {
@@ -267,7 +273,7 @@ void randomInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
 
     instruction[1000].opcode = -1;
     machine(instruction, RAM, cache1, cache2, cache3);
-    free(instruction);
+    // free(instruction);
 }
 
 void generatorInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
@@ -351,6 +357,6 @@ void generatorInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
     instruction[10000].opcode = -1;
     machine(instruction, RAM, cache1, cache2, cache3);
 
-    free(instruction);
+    // free(instruction);
     fclose(arquivo);
 }
