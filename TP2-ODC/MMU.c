@@ -5,7 +5,7 @@
 
 // maquina -> cache1 -> cache2 -> cache3 -> RAM
 
-MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
+int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
                              MemoryBlock *cache2, MemoryBlock *cache3) {
     // int cache1Position = (int)add.addBlock % sizeCache1;  // valor entre 0 e
     // 15 int cache2Position = (int)add.addBlock % sizeCache2;  // valor entre 0
@@ -23,7 +23,7 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
             // cache1[i].updated = true;
             cache1[i].sec = sec;
 
-            return cache1[i];
+            return i;
         }
     }
 
@@ -69,7 +69,7 @@ MemoryBlock searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
     cache3[cache3Position].sec = sec;
     return cachesTest(add.addBlock, cache1, cache2, cache3, cost, 0);
 }
-MemoryBlock cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
+int cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
                        MemoryBlock *cache3, int cost, int isCache2) {
     MemoryBlock aux;
     int cache1position, cache2position, verify = 0;
@@ -115,12 +115,12 @@ MemoryBlock cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
     cache1[cache1position].sec = sec;
 
     cache1[cache1position].cost = cost;
-    return cache1[cache1position];
+    return cache1position;
 }
 
 int getOldestPosition(int sizeCache, MemoryBlock *cache) {
     time_t oldestTime = cache[0].sec;
-    // time(&oldestTime);
+    time(&oldestTime);
     int position = 0;
     printf("\n\n size cache: %d\n", sizeCache);
     for (int i = 1; i < sizeCache; i++) {

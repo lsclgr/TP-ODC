@@ -20,7 +20,7 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
     int hitC2 = 0;
     int missC3 = 0;
     int hitC3 = 0;
-    int content1, content2, sum, sub;
+    int content1, content2, sum, sub, indexAdd1, indexAdd2, indexAdd3;
     MemoryBlock memoryData;
     MemoryBlock memoryDataAdd1;
     MemoryBlock memoryDataAdd2;
@@ -30,15 +30,25 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
     while (opcode != -1) {
         inst = instruction[PC];
         printf("\nposicao PC %d\n", PC);
-        printf("\nOPCODE: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d add3p: %d\n", inst.opcode, inst.add1.addBlock, inst.add1.addWord, inst.add2.addBlock, inst.add2.addWord, inst.add3.addBlock, inst.add3.addWord);
+        printf(
+            "\nOPCODE: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d "
+            "add3p: %d\n",
+            inst.opcode, inst.add1.addBlock, inst.add1.addWord,
+            inst.add2.addBlock, inst.add2.addWord, inst.add3.addBlock,
+            inst.add3.addWord);
         opcode = inst.opcode;
         if (opcode != -1) {
-            memoryDataAdd1 =
+            indexAdd1 =
                 searchInMemories(inst.add1, RAM, cache1, cache2, cache3);
-            memoryDataAdd2 =
+            memoryDataAdd1 = cache1[indexAdd1];
+
+            indexAdd2 =
                 searchInMemories(inst.add2, RAM, cache1, cache2, cache3);
-            memoryDataAdd3 =
+            memoryDataAdd2 = cache1[indexAdd2];
+
+            indexAdd3 =
                 searchInMemories(inst.add3, RAM, cache1, cache2, cache3);
+            memoryDataAdd3 = cache1[indexAdd3];
 
             cost += memoryDataAdd1.cost;
             cost += memoryDataAdd2.cost;
@@ -127,7 +137,8 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
                 memoryData.isEmpty = true;
                 memoryData.cost = 0;
                 memoryData.cacheHit = 0;
-                setCache(memoryData, RAM, cache1, cache2, cache3);
+                
+                //setCache(memoryData, RAM, cache1, cache2, cache3);
                 break;
             case 1:
                 // printf("\nsegmentacao case 1\n");
@@ -211,7 +222,8 @@ void setCache(MemoryBlock memoryData, MemoryBlock* RAM, MemoryBlock* cache1,
                 return;
             } else {
                 cache3position = getOldestPosition(sizeCache3, cache3);
-                printf("\ncache 3 position %d\n", cache3[cache3position].addBlock);
+                printf("\ncache 3 position %d\n",
+                       cache3[cache3position].addBlock);
                 RAM[cache3[cache3position].addBlock] = cache3[cache3position];
                 RAM[cache3[cache3position].addBlock].updated =
                     false;  // virar false
@@ -247,7 +259,10 @@ void randomInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
 
         instruction[i] = inst;
         // printf("\n posicao %d\n", i);
-        // printf("\nOPCODE: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d add3p: %d\n", inst.opcode, inst.add1.addBlock, inst.add1.addWord, inst.add2.addBlock, inst.add2.addWord, inst.add3.addBlock, inst.add3.addWord);
+        // printf("\nOPCODE: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b:
+        // %d add3p: %d\n", inst.opcode, inst.add1.addBlock, inst.add1.addWord,
+        // inst.add2.addBlock, inst.add2.addWord, inst.add3.addBlock,
+        // inst.add3.addWord);
     }
 
     instruction[1000].opcode = -1;
@@ -324,9 +339,14 @@ void generatorInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
         }
         // printf("%s", aux);
         // printf("\n");
-        //   fscanf(arquivo, "%d %d %d %d %d %d %d\n", &inst.opcode, &inst.add1.addBlock, &inst.add1.addWord, &inst.add2.addBlock, &inst.add2.addWord, &inst.add3.addBlock, &inst.add3.addWord);
+        //   fscanf(arquivo, "%d %d %d %d %d %d %d\n", &inst.opcode,
+        //   &inst.add1.addBlock, &inst.add1.addWord, &inst.add2.addBlock,
+        //   &inst.add2.addWord, &inst.add3.addBlock, &inst.add3.addWord);
         instruction[i] = inst;
-        // printf("\nOPCODE: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d add3p: %d\n", inst.opcode, inst.add1.addBlock, inst.add1.addWord, inst.add2.addBlock, inst.add2.addWord, inst.add3.addBlock, inst.add3.addWord);
+        // printf("\nOPCODE: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b:
+        // %d add3p: %d\n", inst.opcode, inst.add1.addBlock, inst.add1.addWord,
+        // inst.add2.addBlock, inst.add2.addWord, inst.add3.addBlock,
+        // inst.add3.addWord);
     }
     instruction[10000].opcode = -1;
     machine(instruction, RAM, cache1, cache2, cache3);
