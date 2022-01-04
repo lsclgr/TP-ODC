@@ -138,8 +138,10 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
                 // memoryData.cost = 0;
                 // memoryData.cacheHit = 0;
 
+                printf("inst.add3.addWord %d\n", inst.add3.addWord);
                 memoryDataAdd3.words[inst.add3.addWord] = inst.add3.addWord;
                 memoryDataAdd3.updated = true;
+                printf("indexAdd3 %d\n", indexAdd3);
                 cache1[indexAdd3] = memoryDataAdd3;
 
                 // setCache(memoryData, RAM, cache1, cache2, cache3);
@@ -213,9 +215,9 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
 //             return;
 //         } else {
 //             cache2position = getOldestPosition(sizeCache2, cache2);
-//             printf("\ncache 2 position %d\n", cache2[cache2position].addBlock);
-//             verify = 0;
-//             for (int j = 0; j < sizeCache3; j++) {
+//             printf("\ncache 2 position %d\n",
+//             cache2[cache2position].addBlock); verify = 0; for (int j = 0; j <
+//             sizeCache3; j++) {
 //                 if ((!cache3[j].updated) && cache3[j].isEmpty) {
 //                     cache3position = j;
 //                     verify = 1;
@@ -230,7 +232,8 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
 //                 cache3position = getOldestPosition(sizeCache3, cache3);
 //                 printf("\ncache 3 position %d\n",
 //                        cache3[cache3position].addBlock);
-//                 RAM[cache3[cache3position].addBlock] = cache3[cache3position];
+//                 RAM[cache3[cache3position].addBlock] =
+//                 cache3[cache3position];
 //                 RAM[cache3[cache3position].addBlock].updated =
 //                     false;  // virar false
 //                 RAM[cache3[cache3position].addBlock].isEmpty =

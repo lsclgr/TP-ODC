@@ -52,14 +52,15 @@ int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
             cache3[i] = RAM[(int)add.addBlock];
             cache3[i].cacheHit = 4;
             cache3[i].sec = sec;
+            printf("\n55\n");
 
             return cachesTest(i, cache1, cache2, cache3, cost, 0);
         }
     }
 
     int cache3Position = getOldestPosition(sizeCache3, cache3);
-    printf("\ncache 3 position %d\n", cache3Position);
-
+    printf("\n61cache 3 position %d\n", cache3Position);
+    printf("62 :p %d\n", cache3[cache3Position].addBlock);
     RAM[cache3[cache3Position].addBlock] = cache3[cache3Position];
     RAM[cache3[cache3Position].addBlock].updated = false;  // virar false
     RAM[cache3[cache3Position].addBlock].isEmpty = false;  // virar false
@@ -67,6 +68,7 @@ int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
     cache3[cache3Position] = RAM[(int)add.addBlock];
     cache3[cache3Position].cacheHit = 4;
     cache3[cache3Position].sec = sec;
+    printf("70 70 e 70 dnv\n");
     return cachesTest(add.addBlock, cache1, cache2, cache3, cost, 0);
 }
 int cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
@@ -81,6 +83,7 @@ int cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
             if ((!cache2[j].updated) && cache2[j].isEmpty) {
                 cache2position = j;
                 verify = 1;
+                break;
             }
         }
         if (verify == 0) {
@@ -91,8 +94,11 @@ int cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
             cache3[i] = aux;
         } else {
             cache2[cache2position] = cache3[i];
+            printf("95 \n");
         }
         cache2[cache2position].sec = sec;
+    } else {
+        cache2position = i;
     }
 
     verify = 0;
@@ -100,11 +106,13 @@ int cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
         if ((!cache1[j].updated) && cache1[j].isEmpty) {
             cache1position = j;
             verify = 1;
+            break;
         }
     }
     if (verify == 0) {
         cache1position = getOldestPosition(sizeCache1, cache1);
         printf("\ncache 1 position %d\n", cache1position);
+        printf("cache 2 position %d\n", cache2position);
         aux = cache1[cache1position];
         cache1[cache1position] = cache2[cache2position];
         cache2[cache2position] = aux;
@@ -115,6 +123,7 @@ int cachesTest(int i, MemoryBlock *cache1, MemoryBlock *cache2,
     cache1[cache1position].sec = sec;
 
     cache1[cache1position].cost = cost;
+    printf("\n121cache 1 position %d\n", cache1position);
     return cache1position;
 }
 
@@ -125,6 +134,7 @@ int getOldestPosition(int sizeCache, MemoryBlock *cache) {
     printf("\n\n size cache: %d\n", sizeCache);
     for (int i = 1; i < sizeCache; i++) {
         // printf("\n i dentro do for: %d\n", i);
+        printf("cache[%d].sec %ld \n", i, oldestTime);
         if (cache[i].sec < oldestTime) {
             oldestTime = cache[i].sec;
             position = i;

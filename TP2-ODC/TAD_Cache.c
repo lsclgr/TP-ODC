@@ -9,7 +9,7 @@ MemoryBlock *createRAM(MemoryBlock *RAM) {
     for (int i = 0; i < sizeRAM; i++) {
         RAM[i].addBlock = i;
         RAM[i].updated = false;
-        RAM[i].isEmpty = true;
+        RAM[i].isEmpty = false;
         RAM[i].cost = 0;
         RAM[i].cacheHit = 0;
         for (int j = 0; j < 4; j++) {
