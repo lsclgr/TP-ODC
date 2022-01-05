@@ -29,7 +29,7 @@ MemoryBlock *createEmptyCache(int size, MemoryBlock *cache) {
         cache[i].isEmpty = true;
         cache[i].cost = 0;
         cache[i].cacheHit = 0;
-        cache[i].sec = sec;
+        cache[i].sec = 0;
     }
     return cache;
 }
@@ -44,7 +44,7 @@ MemoryBlock *createCacheWithData(int size, MemoryBlock *cache) {
         cache[i].isEmpty = true;
         cache[i].cost = 0;
         cache[i].cacheHit = 0;
-        cache[i].sec = sec;
+        cache[i].sec = 0;
         for (int j = 0; j < 4; j++) {
             cache[i].words[j] = rand() % 1000000;
         }

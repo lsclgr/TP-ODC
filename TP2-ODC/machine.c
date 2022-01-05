@@ -20,7 +20,8 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
     int hitC2 = 0;
     int missC3 = 0;
     int hitC3 = 0;
-    int content1, content2, sum, sub, indexAdd1, indexAdd2, indexAdd3;
+    int content1, content2, sum, sub, indexAdd1, indexAdd2, indexAdd3,
+        contTime = 0;
     MemoryBlock memoryDataAdd1;
     MemoryBlock memoryDataAdd2;
     MemoryBlock memoryDataAdd3;
@@ -28,7 +29,7 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
 
     while (opcode != -1) {
         inst = instruction[PC];
-        // if (PC == 50) {
+        // if (PC == 100) {
         //     exit(1);
         // }
         printf("\nposicao PC %d\n", PC);
@@ -40,16 +41,16 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
             inst.add3.addWord);
         opcode = inst.opcode;
         if (opcode != -1) {
-            indexAdd1 =
-                searchInMemories(inst.add1, RAM, cache1, cache2, cache3);
+            indexAdd1 = searchInMemories(inst.add1, RAM, cache1, cache2, cache3,
+                                         contTime);
             memoryDataAdd1 = cache1[indexAdd1];
 
-            indexAdd2 =
-                searchInMemories(inst.add2, RAM, cache1, cache2, cache3);
+            indexAdd2 = searchInMemories(inst.add2, RAM, cache1, cache2, cache3,
+                                         contTime);
             memoryDataAdd2 = cache1[indexAdd2];
 
-            indexAdd3 =
-                searchInMemories(inst.add3, RAM, cache1, cache2, cache3);
+            indexAdd3 = searchInMemories(inst.add3, RAM, cache1, cache2, cache3,
+                                         contTime);
             memoryDataAdd3 = cache1[indexAdd3];
 
             cost += memoryDataAdd1.cost;
@@ -126,7 +127,7 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
                 hitC1, missC1, hitC2, missC2, hitC3, missC3);
         }
 
-        printf("\n%d\n", inst.opcode);
+        // printf("\n%d\n", inst.opcode);
         switch (opcode) {
             case 0:
                 // printf("\nsegmentacao case 0\n");
@@ -140,41 +141,46 @@ void machine(Instruction* instruction, MemoryBlock* RAM, MemoryBlock* cache1,
                 // memoryData.cost = 0;
                 // memoryData.cacheHit = 0;
 
-                printf("inst.add3.addWord %d\n", inst.add3.addWord);
+                // printf("inst.add3.addWord %d\n", inst.add3.addWord);
                 memoryDataAdd3.words[inst.add3.addWord] = inst.add3.addWord;
                 memoryDataAdd3.updated = true;
-                printf("indexAdd3 %d\n", indexAdd3);
+                // printf("indexAdd3 %d\n", indexAdd3);
                 cache1[indexAdd3] = memoryDataAdd3;
 
                 // setCache(memoryData, RAM, cache1, cache2, cache3);
                 break;
             case 1:
                 // printf("\nsegmentacao case 1\n");
-                printf("\ncase 1 %d\n", inst.add1.addWord);
+                // printf("\ncase 1 %d\n", inst.add1.addWord);
                 content1 = memoryDataAdd1.words[inst.add1.addWord];
                 content2 = memoryDataAdd2.words[inst.add2.addWord];
                 // printf("%d\n", inst.add2.addWord);
                 sum = content1 + content2;
+                // printf("\nsum memoryDataAdd3 add block %d index %d\n",
+                //        memoryDataAdd3.addBlock, indexAdd3);
                 memoryDataAdd3.words[inst.add3.addWord] = sum;
                 memoryDataAdd3.updated = true;
                 cache1[indexAdd3] = memoryDataAdd3;
                 // setCache(memoryDataAdd3, RAM, cache1, cache2, cache3);
 
-                printf("Somando %d com %d e gerando %d\n", content1, content2,
-                       cache1[indexAdd3].words[inst.add3.addWord]);
+                // printf("Somando %d com %d e gerando %d\n", content1,
+                // content2,
+                // cache1[indexAdd3].words[inst.add3.addWord]);
                 break;
             case 2:
                 // printf("\nsegmentacao case 2\n");
                 content1 = memoryDataAdd1.words[inst.add1.addWord];
                 content2 = memoryDataAdd2.words[inst.add2.addWord];
                 sub = content1 - content2;
+                // printf("\n memoryDataAdd3 add block %d index %d\n",
+                //  memoryDataAdd3.addBlock, indexAdd3);
                 memoryDataAdd3.words[inst.add3.addWord] = sub;
                 memoryDataAdd3.updated = true;
                 cache1[indexAdd3] = memoryDataAdd3;
                 // setCache(memoryDataAdd3, RAM, cache1, cache2, cache3);
 
-                printf("Subtraindo %d com %d e gerando %d\n", content1,
-                       content2, sub);
+                // printf("Subtraindo %d com %d e gerando %d\n", content1,
+                //       content2, sub);
                 break;
             case 3:
                 // printf("\nsegmentacao case 3\n");
@@ -288,7 +294,7 @@ void generatorInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
     Instruction *instruction = NULL, inst;
     int cont = 0;
     instruction = malloc(10001 * sizeof(Instruction));
-    printf("\n262\n");
+    // printf("\n262\n");
     for (int i = 0; i < 10000; i++) {
         cont = 0;
         fgets(aux, 21, arquivo);
@@ -312,7 +318,7 @@ void generatorInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
                     break;
                 }
             }
-            printf("contador: %d\n", cont);
+            // printf("contador: %d\n", cont);
             switch (cont) {
                 case 1:
                     inst.opcode = atoi(aux2);
