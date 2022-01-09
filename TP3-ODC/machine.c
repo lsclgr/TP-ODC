@@ -23,6 +23,8 @@ void machine(int PC, int interruption, Instruction* instruction,
     int hitC2 = 0;
     int missC3 = 0;
     int hitC3 = 0;
+    int missRAM = 0;
+    int hitRAM = 0;
     int content1, content2, sum, sub, indexAdd1, indexAdd2, indexAdd3,
         contTime = 0;
     MemoryBlock memoryDataAdd1;
@@ -74,7 +76,14 @@ void machine(int PC, int interruption, Instruction* instruction,
                     hitC3++;
                     break;
 
+                case 4:
+                    hitRAM++;
+                    missC1++;
+                    missC2++;
+                    missC3++;
+                    break;
                 default:
+                    missRAM++;
                     missC1++;
                     missC2++;
                     missC3++;
@@ -95,7 +104,14 @@ void machine(int PC, int interruption, Instruction* instruction,
                     hitC3++;
                     break;
 
+                case 4:
+                    hitRAM++;
+                    missC1++;
+                    missC2++;
+                    missC3++;
+                    break;
                 default:
+                    missRAM++;
                     missC1++;
                     missC2++;
                     missC3++;
@@ -116,7 +132,14 @@ void machine(int PC, int interruption, Instruction* instruction,
                     hitC3++;
                     break;
 
+                case 4:
+                    hitRAM++;
+                    missC1++;
+                    missC2++;
+                    missC3++;
+                    break;
                 default:
+                    missRAM++;
                     missC1++;
                     missC2++;
                     missC3++;
@@ -126,8 +149,9 @@ void machine(int PC, int interruption, Instruction* instruction,
             printf("Custo até o momento do programa em execução: %lld\n", cost);
             printf(
                 "Hits e Misses até o momento - C1 hit %d | C1 miss %d | C2 hit "
-                "%d | C2 miss: %d | C3 hit %d | C3 miss: %d\n",
-                hitC1, missC1, hitC2, missC2, hitC3, missC3);
+                "%d | C2 miss: %d | C3 hit %d | C3 miss: %d | RAM hit %d | RAM "
+                "miss: %d\n",
+                hitC1, missC1, hitC2, missC2, hitC3, missC3, hitRAM, missRAM);
         }
 
         // printf("\n%d\n", inst.opcode);
@@ -169,6 +193,9 @@ void machine(int PC, int interruption, Instruction* instruction,
             int probInterruption = rand() % 4;
             printf("%d\n", probInterruption);
             if (probInterruption == 0) {
+                // FILE* file;
+                // file = fopen("pc.dat", "rb+");
+                // fwrite(&PC, sizeof(int), 1, file);
                 printf("\nINICIO TRATADOR DE INTERRUPÇÃO\n");
                 system("sleep 02");
                 // colocar tempinho para ficar realista
@@ -180,7 +207,10 @@ void machine(int PC, int interruption, Instruction* instruction,
                 machine(0, 1, instInterruption, RAM, cache1, cache2, cache3);
                 printf("\nFIM TRATADOR DE INTERRUPÇÃO\n");
                 system("sleep 02");
-                break;
+                // fread(&PC, sizeof(int), 1, file);
+                // fclose(file);
+                exit(0);
+                generatorInstructions(PC, RAM, cache1, cache2, cache3);
             }
         }
     }
@@ -216,7 +246,7 @@ void randomInstructions(int nInst, Instruction** instInterruption,
     //  free(instruction);
 }
 
-void generatorInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
+void generatorInstructions(int PC, MemoryBlock* RAM, MemoryBlock* cache1,
                            MemoryBlock* cache2, MemoryBlock* cache3) {
     instGenerator();
     FILE* arquivo = fopen("instrucoes.txt", "r");
@@ -283,8 +313,8 @@ void generatorInstructions(MemoryBlock* RAM, MemoryBlock* cache1,
         instruction[i] = inst;
     }
     instruction[10000].opcode = -1;
-    machine(0, 0, instruction, RAM, cache1, cache2, cache3);
+    fclose(arquivo);
+    machine(PC, 0, instruction, RAM, cache1, cache2, cache3);
 
     // free(instruction);
-    fclose(arquivo);
 }

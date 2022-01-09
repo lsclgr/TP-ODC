@@ -7,6 +7,9 @@
 
 int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
                      MemoryBlock *cache2, MemoryBlock *cache3, int contTime) {
+    FILE *arq;
+    arq = fopen("EM.dat", "rb+");
+    MemoryBlock blockEM;
     int cost = 0;
     cost += 10;
     contTime++;
@@ -52,12 +55,20 @@ int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
     for (int i = 0; i < sizeRAM; i++) {
         if ((!RAM[i].updated) && RAM[i].isEmpty) {
             // pegar do arquivo
-            // RAM[i] = bloco q pegamos do arquivo
+            //arq = fopen("EM.dat", "r");
+            if (!arq) {
+                perror("Erro ao abrir arquivo");
+                exit(1);
+            }
+            fseek(arq, add.addBlock * sizeof(MemoryBlock),
+                  SEEK_SET);  // usar o fseek para pegar o bloco
+            fread(&blockEM, sizeof(MemoryBlock), 1, arq);
+            RAM[i] = blockEM;
             // lembrar de salvar o bloco do arquivo em uma variavel do tipo
             // memoryBlock para passa-la direto para a ram ou então é preciso
             // usar cada prosição da tad
             RAM[i].cacheHit = 5;
-
+            fclose(arq);
             return cachesTest(i, RAM, cache1, cache2, cache3, cost, 3,
                               contTime);
         }
@@ -87,14 +98,36 @@ int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
     // }
 
     // implementar HD blablabla
-    int cache3Position = getOldestPosition(sizeCache3, cache3, contTime);
-    RAM[cache3[cache3Position].addBlock] = cache3[cache3Position];
-    RAM[cache3[cache3Position].addBlock].updated = false;  // virar false
-    RAM[cache3[cache3Position].addBlock].isEmpty = false;  // virar false
+    // int cache3Position = getOldestPosition(sizeCache3, cache3, contTime);
+    // RAM[cache3[cache3Position].addBlock] = cache3[cache3Position];
+    // RAM[cache3[cache3Position].addBlock].updated = false;  // virar false
+    // RAM[cache3[cache3Position].addBlock].isEmpty = false;  // virar false
 
-    cache3[cache3Position] = RAM[(int)add.addBlock];
-    cache3[cache3Position].cacheHit = 4;
-    return cachesTest(cache3Position, RAM, cache1, cache2, cache3, cost, 0,
+    // cache3[cache3Position] = RAM[(int)add.addBlock];
+    // cache3[cache3Position].cacheHit = 5;
+    // return cachesTest(cache3Position, RAM, cache1, cache2, cache3, cost, 0,
+    //                   contTime);
+
+    int RAMposition = getOldestPosition(sizeRAM, RAM, contTime);
+    printf("%d\n", RAMposition);
+
+    RAM[RAMposition].updated = false;
+    RAM[RAMposition].isEmpty = false;
+    blockEM = RAM[RAMposition];
+    //arq = fopen("EM.dat", "rb+");
+    if (!arq) {
+        perror("Erro ao abrir arquivo");
+        exit(1);
+    }
+    fseek(arq, RAM[RAMposition].addBlock * sizeof(MemoryBlock),
+          SEEK_SET);  // usar o fseek para pegar o bloco
+    MemoryBlock getEM;
+    fread(&getEM, sizeof(MemoryBlock), 1, arq);
+    fwrite(&blockEM, sizeof(MemoryBlock), 1, arq);
+    fclose(arq);
+    RAM[RAMposition] = getEM;
+    RAM[RAMposition].cacheHit = 5;
+    return cachesTest(RAMposition, RAM, cache1, cache2, cache3, cost, 3,
                       contTime);
 }
 int cachesTest(int i, MemoryBlock *RAM, MemoryBlock *cache1,

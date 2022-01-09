@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-MemoryBlock *createRAM(MemoryBlock *RAM, int size) {
+MemoryBlock *createEM(MemoryBlock *RAM, int size) {
     RAM = (MemoryBlock *)malloc(size * sizeof(MemoryBlock));
     for (int i = 0; i < size; i++) {
         RAM[i].addBlock = i;
