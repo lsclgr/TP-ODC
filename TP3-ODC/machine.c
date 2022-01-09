@@ -16,6 +16,20 @@ void machine(int PC, int interruption, Instruction* instruction,
     srand(time(NULL));
     int opcode = RAND_MAX;
     long long int cost = 0;
+    int opcodeAux = instruction[0].opcode, pcAux = 0;
+    printf("\n\n");
+    while (opcodeAux != -1) {
+        printf(
+            "%d:%d:%d:%d:%d:%d:%d\n", instruction[pcAux].opcode,
+            instruction[pcAux].add1.addBlock, instruction[pcAux].add1.addWord,
+            instruction[pcAux].add2.addBlock, instruction[pcAux].add2.addWord,
+            instruction[pcAux].add3.addBlock, instruction[pcAux].add3.addWord);
+        opcodeAux = instruction[++pcAux].opcode;
+    }
+    printf("%d:%d:%d:%d:%d:%d:%d\n", instruction[pcAux].opcode,
+           instruction[pcAux].add1.addBlock, instruction[pcAux].add1.addWord,
+           instruction[pcAux].add2.addBlock, instruction[pcAux].add2.addWord,
+           instruction[pcAux].add3.addBlock, instruction[pcAux].add3.addWord);
 
     int missC1 = 0;
     int hitC1 = 0;
@@ -34,6 +48,14 @@ void machine(int PC, int interruption, Instruction* instruction,
 
     while (opcode != -1) {
         inst = instruction[PC];
+        printf(
+            "\nOPCODE2: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d "
+            "add3p: %d\n",
+            instruction[PC].opcode, instruction[PC].add1.addBlock,
+            instruction[PC].add1.addWord, instruction[PC].add2.addBlock,
+            instruction[PC].add2.addWord, instruction[PC].add3.addBlock,
+            instruction[PC].add3.addWord);
+
         // if (PC == 100) {
         //     exit(1);
         // }
@@ -152,9 +174,10 @@ void machine(int PC, int interruption, Instruction* instruction,
                 "%d | C2 miss: %d | C3 hit %d | C3 miss: %d | RAM hit %d | RAM "
                 "miss: %d\n",
                 hitC1, missC1, hitC2, missC2, hitC3, missC3, hitRAM, missRAM);
+            PC++;
         }
 
-        // printf("\n%d\n", inst.opcode);
+        printf("\n%d\n", inst.opcode);
         switch (opcode) {
             case 0:
                 memoryDataAdd3.words[inst.add3.addWord] = inst.add3.addWord;
@@ -179,42 +202,40 @@ void machine(int PC, int interruption, Instruction* instruction,
                 cache1[indexAdd3] = memoryDataAdd3;
                 break;
             case 3:
-                instruction[PC].add1.addWord = memoryDataAdd1.words[0];
+                // instruction[PC].add1.addWord = memoryDataAdd1.words[0];
                 break;
             default:
                 break;
         }
-        PC++;
+
         // lembrar de salvar posição pc caso ocorra uma interrupção para voltar
         // do mesmo lugar dps que acabar a interrupção
-        // if (interruption == 0) {  // interruption=1 tem interrupção, =0 é
-        // normal
-        //     // aqui dentro sorteia a prob de 25% de ocorrer uma interrupção e
-        //     se
-        //     // for chama a maquina de novo, agr com a interrupçao
-        //     int probInterruption = rand() % 4;
-        //     printf("%d\n", probInterruption);
-        //     if (probInterruption == 0) {
-        //         // FILE* file;
-        //         // file = fopen("pc.dat", "rb+");
-        //         // fwrite(&PC, sizeof(int), 1, file);
-        //         printf("\nINICIO TRATADOR DE INTERRUPÇÃO\n");
-        //         system("sleep 02");
-        //         // colocar tempinho para ficar realista
-        //         int numRandomoInstrucions = rand() % 100;
-        //         printf("%d\n", numRandomoInstrucions);
-        //         Instruction* instInterruption = NULL;
-        //         randomInstructions(numRandomoInstrucions, &instInterruption,
-        //                            RAM, cache1, cache2, cache3);
-        //         machine(0, 1, instInterruption, RAM, cache1, cache2, cache3);
-        //         printf("\nFIM TRATADOR DE INTERRUPÇÃO\n");
-        //         system("sleep 02");
-        //         // fread(&PC, sizeof(int), 1, file);
-        //         // fclose(file);
-        //         break;
-        //         generatorInstructions(PC, RAM, cache1, cache2, cache3);
-        //     }
-        // }
+        if (interruption == 0) {  // interruption=1 tem interrupção, =0 é normal
+            // aqui dentro sorteia a prob de 25% de ocorrer uma interrupção e se
+            // for chama a maquina de novo, agr com a interrupçao
+            int probInterruption = rand() % 4;
+            printf("%d\n", probInterruption);
+            if (probInterruption == 0) {
+                // FILE* file;
+                // file = fopen("pc.dat", "rb+");
+                // fwrite(&PC, sizeof(int), 1, file);
+                printf("\nINICIO TRATADOR DE INTERRUPÇÃO\n");
+                // system("sleep 02");
+                //  colocar tempinho para ficar realista
+                int numRandomoInstrucions = rand() % 100;
+                printf("%d\n", numRandomoInstrucions);
+                // Instruction* instInterruption = NULL;
+                randomInstructions(numRandomoInstrucions, RAM, cache1, cache2,
+                                   cache3);
+                // machine(0, 1, instInterruption, RAM, cache1, cache2, cache3);
+                printf("\nFIM TRATADOR DE INTERRUPÇÃO\n");
+                // system("sleep 02");
+                //  fread(&PC, sizeof(int), 1, file);
+                //  fclose(file);
+                break;
+                generatorInstructions(PC, RAM, cache1, cache2, cache3);
+            }
+        }
     }
 }
 
@@ -222,7 +243,7 @@ void randomInstructions(int nInst, MemoryBlock* RAM, MemoryBlock* cache1,
                         MemoryBlock* cache2, MemoryBlock* cache3) {
     Instruction inst;
     Instruction* instInterruption = malloc(nInst * sizeof(Instruction));
-    for (int i = 0; i < nInst - 1; i++) {
+    for (int i = 0; i < (nInst - 1); i++) {
         inst.opcode = rand() % 4;
         inst.add1.addBlock = rand() % 1000;
         inst.add1.addWord = rand() % 4;
@@ -232,6 +253,9 @@ void randomInstructions(int nInst, MemoryBlock* RAM, MemoryBlock* cache1,
 
         inst.add3.addBlock = rand() % 1000;
         inst.add3.addWord = rand() % 4;
+        printf("%d:%d:%d:%d:%d:%d:%d\n", inst.opcode, inst.add1.addBlock,
+               inst.add1.addWord, inst.add2.addBlock, inst.add2.addWord,
+               inst.add3.addBlock, inst.add3.addWord);
         instInterruption[i] = inst;
     }
 
