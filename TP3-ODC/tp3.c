@@ -10,8 +10,9 @@
 int main() {
     MemoryBlock *HD = NULL, *RAM = NULL, *cache1 = NULL, *cache2 = NULL,
                 *cache3 = NULL;
-    FILE* arq;
+    FILE *arq;
     int ret;
+    int y = 1000;
 
     arq = fopen("EM.dat", "wb");
     if (!arq) {
@@ -58,7 +59,7 @@ int main() {
     cache2 = createEmptyCache(sizeCache2, cache2);
     cache3 = createEmptyCache(sizeCache3, cache3);
 
-    // randomInstructions(RAM, cache1, cache2, cache3);
+    // randomInstructions(y, RAM, cache1, cache2, cache3);
     generatorInstructions(0, RAM, cache1, cache2, cache3);
 
     return 0;

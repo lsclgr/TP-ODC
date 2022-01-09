@@ -187,40 +187,41 @@ void machine(int PC, int interruption, Instruction* instruction,
         PC++;
         // lembrar de salvar posição pc caso ocorra uma interrupção para voltar
         // do mesmo lugar dps que acabar a interrupção
-        if (interruption == 0) {  // interruption=1 tem interrupção, =0 é normal
-            // aqui dentro sorteia a prob de 25% de ocorrer uma interrupção e se
-            // for chama a maquina de novo, agr com a interrupçao
-            int probInterruption = rand() % 4;
-            printf("%d\n", probInterruption);
-            if (probInterruption == 0) {
-                // FILE* file;
-                // file = fopen("pc.dat", "rb+");
-                // fwrite(&PC, sizeof(int), 1, file);
-                printf("\nINICIO TRATADOR DE INTERRUPÇÃO\n");
-                system("sleep 02");
-                // colocar tempinho para ficar realista
-                int numRandomoInstrucions = rand() % 100;
-                printf("%d\n", numRandomoInstrucions);
-                Instruction* instInterruption = NULL;
-                randomInstructions(numRandomoInstrucions, &instInterruption,
-                                   RAM, cache1, cache2, cache3);
-                machine(0, 1, instInterruption, RAM, cache1, cache2, cache3);
-                printf("\nFIM TRATADOR DE INTERRUPÇÃO\n");
-                system("sleep 02");
-                // fread(&PC, sizeof(int), 1, file);
-                // fclose(file);
-                exit(0);
-                generatorInstructions(PC, RAM, cache1, cache2, cache3);
-            }
-        }
+        // if (interruption == 0) {  // interruption=1 tem interrupção, =0 é
+        // normal
+        //     // aqui dentro sorteia a prob de 25% de ocorrer uma interrupção e
+        //     se
+        //     // for chama a maquina de novo, agr com a interrupçao
+        //     int probInterruption = rand() % 4;
+        //     printf("%d\n", probInterruption);
+        //     if (probInterruption == 0) {
+        //         // FILE* file;
+        //         // file = fopen("pc.dat", "rb+");
+        //         // fwrite(&PC, sizeof(int), 1, file);
+        //         printf("\nINICIO TRATADOR DE INTERRUPÇÃO\n");
+        //         system("sleep 02");
+        //         // colocar tempinho para ficar realista
+        //         int numRandomoInstrucions = rand() % 100;
+        //         printf("%d\n", numRandomoInstrucions);
+        //         Instruction* instInterruption = NULL;
+        //         randomInstructions(numRandomoInstrucions, &instInterruption,
+        //                            RAM, cache1, cache2, cache3);
+        //         machine(0, 1, instInterruption, RAM, cache1, cache2, cache3);
+        //         printf("\nFIM TRATADOR DE INTERRUPÇÃO\n");
+        //         system("sleep 02");
+        //         // fread(&PC, sizeof(int), 1, file);
+        //         // fclose(file);
+        //         break;
+        //         generatorInstructions(PC, RAM, cache1, cache2, cache3);
+        //     }
+        // }
     }
 }
 
-void randomInstructions(int nInst, Instruction** instInterruption,
-                        MemoryBlock* RAM, MemoryBlock* cache1,
+void randomInstructions(int nInst, MemoryBlock* RAM, MemoryBlock* cache1,
                         MemoryBlock* cache2, MemoryBlock* cache3) {
     Instruction inst;
-    *instInterruption = malloc(nInst * sizeof(Instruction));
+    Instruction* instInterruption = malloc(nInst * sizeof(Instruction));
     for (int i = 0; i < nInst - 1; i++) {
         inst.opcode = rand() % 4;
         inst.add1.addBlock = rand() % 1000;
@@ -231,24 +232,24 @@ void randomInstructions(int nInst, Instruction** instInterruption,
 
         inst.add3.addBlock = rand() % 1000;
         inst.add3.addWord = rand() % 4;
-        (*instInterruption)[i] = inst;
+        instInterruption[i] = inst;
     }
 
-    (*instInterruption)[nInst - 1].opcode = -1;
-    (*instInterruption)[nInst - 1].add1.addBlock = -1;
-    (*instInterruption)[nInst - 1].add1.addWord = -1;
-    (*instInterruption)[nInst - 1].add2.addBlock = -1;
-    (*instInterruption)[nInst - 1].add2.addWord = -1;
-    (*instInterruption)[nInst - 1].add3.addBlock = -1;
-    (*instInterruption)[nInst - 1].add3.addWord = -1;
+    instInterruption[nInst - 1].opcode = -1;
+    instInterruption[nInst - 1].add1.addBlock = -1;
+    instInterruption[nInst - 1].add1.addWord = -1;
+    instInterruption[nInst - 1].add2.addBlock = -1;
+    instInterruption[nInst - 1].add2.addWord = -1;
+    instInterruption[nInst - 1].add3.addBlock = -1;
+    instInterruption[nInst - 1].add3.addWord = -1;
 
-    // machine(0, 1, instruction, RAM, cache1, cache2, cache3);
+    machine(0, 1, instInterruption, RAM, cache1, cache2, cache3);
     //  free(instruction);
 }
 
 void generatorInstructions(int PC, MemoryBlock* RAM, MemoryBlock* cache1,
                            MemoryBlock* cache2, MemoryBlock* cache3) {
-    instGenerator();
+    // instGenerator();
     FILE* arquivo = fopen("instrucoes.txt", "r");
     char aux[21], aux2[4];
     Instruction *instruction = NULL, inst;

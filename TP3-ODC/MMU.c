@@ -8,7 +8,7 @@
 int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
                      MemoryBlock *cache2, MemoryBlock *cache3, int contTime) {
     FILE *arq;
-    arq = fopen("EM.dat", "rb+");
+    // arq = fopen("EM.dat", "rb+");
     MemoryBlock blockEM;
     int cost = 0;
     cost += 10;
@@ -55,9 +55,9 @@ int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
     for (int i = 0; i < sizeRAM; i++) {
         if ((!RAM[i].updated) && RAM[i].isEmpty) {
             // pegar do arquivo
-            //arq = fopen("EM.dat", "r");
+            arq = fopen("EM.dat", "rb");
             if (!arq) {
-                perror("Erro ao abrir arquivo");
+                perror("Erro ao abrir arquivo60");
                 exit(1);
             }
             fseek(arq, add.addBlock * sizeof(MemoryBlock),
@@ -114,9 +114,9 @@ int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
     RAM[RAMposition].updated = false;
     RAM[RAMposition].isEmpty = false;
     blockEM = RAM[RAMposition];
-    //arq = fopen("EM.dat", "rb+");
+    arq = fopen("EM.dat", "rb+");
     if (!arq) {
-        perror("Erro ao abrir arquivo");
+        perror("Erro ao abrir arquivo119");
         exit(1);
     }
     fseek(arq, RAM[RAMposition].addBlock * sizeof(MemoryBlock),

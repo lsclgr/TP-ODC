@@ -11,8 +11,7 @@ void setCache(MemoryBlock memoryData, MemoryBlock* RAM, MemoryBlock* cache1,
 void machine(int PC, int interruption, Instruction* instruction,
              MemoryBlock* RAM, MemoryBlock*, MemoryBlock*, MemoryBlock*);
 
-void randomInstructions(int nInst, Instruction** instInterruption,
-                        MemoryBlock* RAM, MemoryBlock* cache1,
+void randomInstructions(int nInst, MemoryBlock* RAM, MemoryBlock* cache1,
                         MemoryBlock* cache2, MemoryBlock* cache3);
 
 void generatorInstructions(int PC, MemoryBlock* RAM, MemoryBlock* cache1,
