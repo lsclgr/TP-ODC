@@ -13,6 +13,7 @@ int main() {
     FILE *arq;
     int ret;
     // int y = 1000;
+    FILE *arquivo = fopen("instructions2.txt", "r");
 
     arq = fopen("EM.dat", "wb+");
     if (!arq) {
@@ -60,7 +61,8 @@ int main() {
     cache3 = createEmptyCache(sizeCache3, cache3);
 
     // randomInstructions(10000, arq, RAM, cache1, cache2, cache3);
-    generatorInstructions(0, arq, RAM, cache1, cache2, cache3);
+    generatorInstructions(0, arquivo, arq, RAM, cache1, cache2, cache3);
     fclose(arq);
+    fclose(arquivo);
     return 0;
 }

@@ -9,7 +9,7 @@
 
 #include "MMU.h"
 
-void machine(int PC, int interruption, Instruction* instruction, FILE* arq,
+void machine(int PC, int interruption, Instruction* instruction, FILE* arquivo, FILE* arq,
              MemoryBlock* RAM, MemoryBlock* cache1, MemoryBlock* cache2,
              MemoryBlock* cache3) {
     srand(time(NULL));
@@ -216,25 +216,26 @@ void machine(int PC, int interruption, Instruction* instruction, FILE* arq,
                 // fwrite(&PC, sizeof(int), 1, file);
                 printf("\nINICIO TRATADOR DE INTERRUPÇÃO\n");
                 system("sleep 02");
-                //  colocar tempinho para ficar realista
-                // int numRandomoInstrucions = rand() % 40;
-                // printf("%d\n", numRandomoInstrucions);
-                // Instruction* instInterruption = NULL;
-                // randomInstructions(numRandomoInstrucions, arq, RAM, cache1,
-                // cache2, cache3);
-                // machine(0, 1, instInterruption, RAM, cache1, cache2,cache3);
-                generatorInstructions2(0, arq, RAM, cache1, cache2, cache3);
+                //   colocar tempinho para ficar realista
+                //  int numRandomoInstrucions = rand() % 40;
+                //  printf("%d\n", numRandomoInstrucions);
+                //  Instruction* instInterruption = NULL;
+                //  randomInstructions(numRandomoInstrucions, arq, RAM, cache1,
+                //  cache2, cache3);
+                //  machine(0, 1, instInterruption, RAM, cache1, cache2,cache3);
+                generatorInstructions2(0, arquivo, arq, RAM, cache1, cache2, cache3);
                 printf("\nFIM TRATADOR DE INTERRUPÇÃO\n");
                 system("sleep 02");
-                //  fread(&PC, sizeof(int), 1, file);
-                //  fclose(file);
-                // break;
+                exit(1);
+                //   fread(&PC, sizeof(int), 1, file);
+                //   fclose(file);
+                //  break;
             }
         }
     }
 }
 
-void randomInstructions(int nInst, FILE* arq, MemoryBlock* RAM,
+void randomInstructions(int nInst, FILE* arquivo, FILE* arq, MemoryBlock* RAM,
                         MemoryBlock* cache1, MemoryBlock* cache2,
                         MemoryBlock* cache3) {
     Instruction inst;
@@ -263,22 +264,22 @@ void randomInstructions(int nInst, FILE* arq, MemoryBlock* RAM,
     instInterruption[nInst - 1].add3.addBlock = -1;
     instInterruption[nInst - 1].add3.addWord = -1;
 
-    machine(0, 1, instInterruption, arq, RAM, cache1, cache2, cache3);
+    machine(0, 1, instInterruption, arquivo, arq, RAM, cache1, cache2, cache3);
     free(instInterruption);
 }
 
-void generatorInstructions(int PC, FILE* arq, MemoryBlock* RAM,
+void generatorInstructions(int PC, FILE* arquivo, FILE* arq, MemoryBlock* RAM,
                            MemoryBlock* cache1, MemoryBlock* cache2,
                            MemoryBlock* cache3) {
     // instGenerator();
-    FILE* arquivo = fopen("instrucoes.txt", "r");
+    FILE* arquivo2 = fopen("instrucoes.txt", "r");
     char aux[21], aux2[4];
     Instruction *instruction = NULL, inst;
     int cont = 0;
     instruction = malloc(10001 * sizeof(Instruction));
     for (int i = 0; i < 10000; i++) {
         cont = 0;
-        fgets(aux, 21, arquivo);
+        fgets(aux, 21, arquivo2);
         for (int j = 0; j < 21; j++) {
             if (aux[j] == '\n') {
                 aux[j] = '\0';
@@ -335,22 +336,22 @@ void generatorInstructions(int PC, FILE* arq, MemoryBlock* RAM,
         instruction[i] = inst;
     }
     instruction[10000].opcode = -1;
-    fclose(arquivo);
-    machine(PC, 0, instruction, arq, RAM, cache1, cache2, cache3);
+    fclose(arquivo2);
+    machine(PC, 0, instruction, arquivo, arq, RAM, cache1, cache2, cache3);
 
     free(instruction);
 }
 
-void generatorInstructions2(int PC, FILE* arq, MemoryBlock* RAM,
+void generatorInstructions2(int PC, FILE* arquivo, FILE* arq, MemoryBlock* RAM,
                             MemoryBlock* cache1, MemoryBlock* cache2,
                             MemoryBlock* cache3) {
     // instGenerator();
-    FILE* arquivo = fopen("instructions2.txt", "r");
+
     char aux[21], aux2[4];
-    Instruction instructionG[10001], inst;
+    Instruction instructionG[51], inst;
     int cont = 0;
     // instructionG = malloc(10001 * sizeof(Instruction));
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 50; i++) {
         cont = 0;
         fgets(aux, 21, arquivo);
         for (int j = 0; j < 21; j++) {
@@ -408,9 +409,24 @@ void generatorInstructions2(int PC, FILE* arq, MemoryBlock* RAM,
         }
         instructionG[i] = inst;
     }
-    instructionG[10000].opcode = -1;
-    fclose(arquivo);
-    machine(PC, 1, instructionG, arq, RAM, cache1, cache2, cache3);
+    instructionG[50].opcode = -1;
+    int pcAux = 0;
+
+    while (instructionG[pcAux].opcode != -1) {
+        printf(
+            "%d:%d:%d:%d:%d:%d:%d\n", instructionG[pcAux].opcode,
+            instructionG[pcAux].add1.addBlock, instructionG[pcAux].add1.addWord,
+            instructionG[pcAux].add2.addBlock, instructionG[pcAux].add2.addWord,
+            instructionG[pcAux].add3.addBlock, instructionG[pcAux].add3.addWord);
+        pcAux++;
+    }
+    printf(
+        "%d:%d:%d:%d:%d:%d:%d\n", instructionG[pcAux].opcode,
+        instructionG[pcAux].add1.addBlock, instructionG[pcAux].add1.addWord,
+        instructionG[pcAux].add2.addBlock, instructionG[pcAux].add2.addWord,
+        instructionG[pcAux].add3.addBlock, instructionG[pcAux].add3.addWord);
+
+    machine(PC, 1, instructionG, arquivo, arq, RAM, cache1, cache2, cache3);
 
     // free(instructionG);
 }

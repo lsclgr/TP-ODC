@@ -6,18 +6,18 @@
 #include "MMU.h"
 #include "TAD_Cache.h"
 
-void machine(int PC, int interruption, Instruction* instruction, FILE* arq,
+void machine(int PC, int interruption, Instruction* instruction, FILE* arquivo, FILE* arq,
              MemoryBlock* RAM, MemoryBlock*, MemoryBlock*, MemoryBlock*);
 
-void randomInstructions(int nInst, FILE* arq, MemoryBlock* RAM,
+void randomInstructions(int nInst, FILE* arquivo, FILE* arq, MemoryBlock* RAM,
                         MemoryBlock* cache1, MemoryBlock* cache2,
                         MemoryBlock* cache3);
 
-void generatorInstructions(int PC, FILE* arq, MemoryBlock* RAM,
+void generatorInstructions(int PC, FILE* arquivo, FILE* arq, MemoryBlock* RAM,
                            MemoryBlock* cache1, MemoryBlock* cache2,
                            MemoryBlock* cache3);
 
-void generatorInstructions2(int PC, FILE* arq, MemoryBlock* RAM,
+void generatorInstructions2(int PC, FILE* arquivo, FILE* arq, MemoryBlock* RAM,
                             MemoryBlock* cache1, MemoryBlock* cache2,
                             MemoryBlock* cache3);
 #endif
