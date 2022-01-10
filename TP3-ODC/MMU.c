@@ -5,9 +5,9 @@
 
 // maquina -> cache1 -> cache2 -> cache3 -> RAM
 
-int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
-                     MemoryBlock *cache2, MemoryBlock *cache3, int contTime) {
-    FILE *arq;
+int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
+                     MemoryBlock *cache1, MemoryBlock *cache2,
+                     MemoryBlock *cache3, int contTime) {
     // arq = fopen("EM.dat", "rb+");
     MemoryBlock blockEM;
     int cost = 0;
@@ -55,11 +55,11 @@ int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
     for (int i = 0; i < sizeRAM; i++) {
         if ((!RAM[i].updated) && RAM[i].isEmpty) {
             // pegar do arquivo
-            arq = fopen("EM.dat", "rb");
-            if (!arq) {
-                perror("Erro ao abrir arquivo60");
-                exit(1);
-            }
+            // arq = fopen("EM.dat", "rb");
+            // if (!arq) {
+            //     perror("Erro ao abrir arquivo60");
+            //     exit(1);
+            // }
             fseek(arq, add.addBlock * sizeof(MemoryBlock),
                   SEEK_SET);  // usar o fseek para pegar o bloco
             fread(&blockEM, sizeof(MemoryBlock), 1, arq);
@@ -68,7 +68,7 @@ int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
             // memoryBlock para passa-la direto para a ram ou então é preciso
             // usar cada prosição da tad
             RAM[i].cacheHit = 5;
-            fclose(arq);
+            // fclose(arq);
             return cachesTest(i, RAM, cache1, cache2, cache3, cost, 3,
                               contTime);
         }
@@ -114,17 +114,17 @@ int searchInMemories(Address add, MemoryBlock *RAM, MemoryBlock *cache1,
     RAM[RAMposition].updated = false;
     RAM[RAMposition].isEmpty = false;
     blockEM = RAM[RAMposition];
-    arq = fopen("EM.dat", "rb+");
-    if (!arq) {
-        perror("Erro ao abrir arquivo119");
-        exit(1);
-    }
+    // arq = fopen("EM.dat", "rb+");
+    //  if (!arq) {
+    //      perror("Erro ao abrir arquivo119");
+    //      exit(1);
+    //  }
     fseek(arq, RAM[RAMposition].addBlock * sizeof(MemoryBlock),
           SEEK_SET);  // usar o fseek para pegar o bloco
     MemoryBlock getEM;
     fread(&getEM, sizeof(MemoryBlock), 1, arq);
     fwrite(&blockEM, sizeof(MemoryBlock), 1, arq);
-    fclose(arq);
+    // fclose(arq);
     RAM[RAMposition] = getEM;
     RAM[RAMposition].cacheHit = 5;
     return cachesTest(RAMposition, RAM, cache1, cache2, cache3, cost, 3,

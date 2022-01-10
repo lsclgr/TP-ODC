@@ -12,9 +12,9 @@ int main() {
                 *cache3 = NULL;
     FILE *arq;
     int ret;
-    int y = 1000;
+    // int y = 1000;
 
-    arq = fopen("EM.dat", "wb");
+    arq = fopen("EM.dat", "wb+");
     if (!arq) {
         perror("Erro ao abrir arquivo");
         exit(1);
@@ -32,16 +32,16 @@ int main() {
         printf("Erro ao gravar...\n");
 
     // fecha o arquivo
-    fclose(arq);
+    // fclose(arq);
 
     MemoryBlock v;
 
     // abre o arquivo em modo leitura
-    arq = fopen("EM.dat", "r");
-    if (!arq) {
-        perror("Erro ao abrir arquivo");
-        exit(1);
-    }
+    // arq = fopen("EM.dat", "r");
+    // if (!arq) {
+    //     perror("Erro ao abrir arquivo");
+    //     exit(1);
+    // }
 
     // lê e imprime os valores contidos no arquivo
     fread(&v, sizeof(MemoryBlock), 1, arq);
@@ -52,7 +52,7 @@ int main() {
     }
 
     // fecha o arquivo
-    fclose(arq);
+    // fclose(arq);
 
     RAM = createEmptyCache(sizeRAM, RAM);
     cache1 = createEmptyCache(sizeCache1, cache1);
@@ -60,7 +60,7 @@ int main() {
     cache3 = createEmptyCache(sizeCache3, cache3);
 
     // randomInstructions(y, RAM, cache1, cache2, cache3);
-    generatorInstructions(0, RAM, cache1, cache2, cache3);
-
+    generatorInstructions(0, arq, RAM, cache1, cache2, cache3);
+    fclose(arq);
     return 0;
 }

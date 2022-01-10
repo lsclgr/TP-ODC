@@ -10,7 +10,7 @@
 #include "MMU.h"
 #include "instructionGenerator.h"
 
-void machine(int PC, int interruption, Instruction* instruction,
+void machine(int PC, int interruption, Instruction* instruction, FILE* arq,
              MemoryBlock* RAM, MemoryBlock* cache1, MemoryBlock* cache2,
              MemoryBlock* cache3) {
     srand(time(NULL));
@@ -56,28 +56,25 @@ void machine(int PC, int interruption, Instruction* instruction,
             instruction[PC].add2.addWord, instruction[PC].add3.addBlock,
             instruction[PC].add3.addWord);
 
-        // if (PC == 100) {
-        //     exit(1);
-        // }
         printf("\nposicao PC %d\n", PC);
-        printf(
-            "\nOPCODE: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d "
-            "add3p: %d\n",
-            inst.opcode, inst.add1.addBlock, inst.add1.addWord,
-            inst.add2.addBlock, inst.add2.addWord, inst.add3.addBlock,
-            inst.add3.addWord);
+
+        // printf(
+        //     "\nOPCODE: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d
+        //     " "add3p: %d\n", inst.opcode, inst.add1.addBlock,
+        //     inst.add1.addWord, inst.add2.addBlock, inst.add2.addWord,
+        //     inst.add3.addBlock, inst.add3.addWord);
         opcode = inst.opcode;
         if (opcode != -1) {
-            indexAdd1 = searchInMemories(inst.add1, RAM, cache1, cache2, cache3,
-                                         contTime);
+            indexAdd1 = searchInMemories(inst.add1, arq, RAM, cache1, cache2,
+                                         cache3, contTime);
             memoryDataAdd1 = cache1[indexAdd1];
 
-            indexAdd2 = searchInMemories(inst.add2, RAM, cache1, cache2, cache3,
-                                         contTime);
+            indexAdd2 = searchInMemories(inst.add2, arq, RAM, cache1, cache2,
+                                         cache3, contTime);
             memoryDataAdd2 = cache1[indexAdd2];
 
-            indexAdd3 = searchInMemories(inst.add3, RAM, cache1, cache2, cache3,
-                                         contTime);
+            indexAdd3 = searchInMemories(inst.add3, arq, RAM, cache1, cache2,
+                                         cache3, contTime);
             memoryDataAdd3 = cache1[indexAdd3];
 
             cost += memoryDataAdd1.cost;
@@ -174,10 +171,9 @@ void machine(int PC, int interruption, Instruction* instruction,
                 "%d | C2 miss: %d | C3 hit %d | C3 miss: %d | RAM hit %d | RAM "
                 "miss: %d\n",
                 hitC1, missC1, hitC2, missC2, hitC3, missC3, hitRAM, missRAM);
-            PC++;
         }
 
-        printf("\n%d\n", inst.opcode);
+        // printf("\n%d\n", inst.opcode);
         switch (opcode) {
             case 0:
                 memoryDataAdd3.words[inst.add3.addWord] = inst.add3.addWord;
@@ -202,12 +198,12 @@ void machine(int PC, int interruption, Instruction* instruction,
                 cache1[indexAdd3] = memoryDataAdd3;
                 break;
             case 3:
-                // instruction[PC].add1.addWord = memoryDataAdd1.words[0];
+                instruction[PC].add1.addWord = memoryDataAdd1.words[0];
                 break;
             default:
                 break;
         }
-
+        PC++;
         // lembrar de salvar posição pc caso ocorra uma interrupção para voltar
         // do mesmo lugar dps que acabar a interrupção
         if (interruption == 0) {  // interruption=1 tem interrupção, =0 é normal
@@ -220,27 +216,28 @@ void machine(int PC, int interruption, Instruction* instruction,
                 // file = fopen("pc.dat", "rb+");
                 // fwrite(&PC, sizeof(int), 1, file);
                 printf("\nINICIO TRATADOR DE INTERRUPÇÃO\n");
-                // system("sleep 02");
+                system("sleep 02");
                 //  colocar tempinho para ficar realista
-                int numRandomoInstrucions = rand() % 100;
+                int numRandomoInstrucions = rand() % 40;
                 printf("%d\n", numRandomoInstrucions);
                 // Instruction* instInterruption = NULL;
-                randomInstructions(numRandomoInstrucions, RAM, cache1, cache2,
-                                   cache3);
+                randomInstructions(numRandomoInstrucions, arq, RAM, cache1,
+                                   cache2, cache3);
                 // machine(0, 1, instInterruption, RAM, cache1, cache2, cache3);
                 printf("\nFIM TRATADOR DE INTERRUPÇÃO\n");
-                // system("sleep 02");
+                system("sleep 02");
                 //  fread(&PC, sizeof(int), 1, file);
                 //  fclose(file);
-                break;
-                generatorInstructions(PC, RAM, cache1, cache2, cache3);
+                // break;
+                // generatorInstructions(PC, arq, RAM, cache1, cache2, cache3);
             }
         }
     }
 }
 
-void randomInstructions(int nInst, MemoryBlock* RAM, MemoryBlock* cache1,
-                        MemoryBlock* cache2, MemoryBlock* cache3) {
+void randomInstructions(int nInst, FILE* arq, MemoryBlock* RAM,
+                        MemoryBlock* cache1, MemoryBlock* cache2,
+                        MemoryBlock* cache3) {
     Instruction inst;
     Instruction* instInterruption = malloc(nInst * sizeof(Instruction));
     for (int i = 0; i < (nInst - 1); i++) {
@@ -267,12 +264,13 @@ void randomInstructions(int nInst, MemoryBlock* RAM, MemoryBlock* cache1,
     instInterruption[nInst - 1].add3.addBlock = -1;
     instInterruption[nInst - 1].add3.addWord = -1;
 
-    machine(0, 1, instInterruption, RAM, cache1, cache2, cache3);
+    machine(0, 1, instInterruption, arq, RAM, cache1, cache2, cache3);
     //  free(instruction);
 }
 
-void generatorInstructions(int PC, MemoryBlock* RAM, MemoryBlock* cache1,
-                           MemoryBlock* cache2, MemoryBlock* cache3) {
+void generatorInstructions(int PC, FILE* arq, MemoryBlock* RAM,
+                           MemoryBlock* cache1, MemoryBlock* cache2,
+                           MemoryBlock* cache3) {
     // instGenerator();
     FILE* arquivo = fopen("instrucoes.txt", "r");
     char aux[21], aux2[4];
@@ -339,7 +337,7 @@ void generatorInstructions(int PC, MemoryBlock* RAM, MemoryBlock* cache1,
     }
     instruction[10000].opcode = -1;
     fclose(arquivo);
-    machine(PC, 0, instruction, RAM, cache1, cache2, cache3);
+    machine(PC, 0, instruction, arq, RAM, cache1, cache2, cache3);
 
     // free(instruction);
 }
