@@ -17,4 +17,7 @@ void generatorInstructions(int PC, FILE* arq, MemoryBlock* RAM,
                            MemoryBlock* cache1, MemoryBlock* cache2,
                            MemoryBlock* cache3);
 
+void generatorInstructions2(int PC, FILE* arq, MemoryBlock* RAM,
+                            MemoryBlock* cache1, MemoryBlock* cache2,
+                            MemoryBlock* cache3);
 #endif

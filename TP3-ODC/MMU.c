@@ -7,17 +7,17 @@
 
 int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
                      MemoryBlock *cache1, MemoryBlock *cache2,
-                     MemoryBlock *cache3, int contTime) {
+                     MemoryBlock *cache3, int *contTime) {
     // arq = fopen("EM.dat", "rb+");
     MemoryBlock blockEM;
     int cost = 0;
     cost += 10;
-    contTime++;
+    (*contTime)++;
     for (int i = 0; i < sizeCache1; i++) {
         if (cache1[i].addBlock == add.addBlock) {
             cache1[i].cost = cost;
             cache1[i].cacheHit = 1;
-            cache1[i].sec = contTime;
+            cache1[i].sec = *contTime;
 
             return i;
         }
@@ -28,7 +28,7 @@ int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
         if (cache2[i].addBlock == add.addBlock) {
             cache2[i].cacheHit = 2;
             return cachesTest(i, RAM, cache1, cache2, cache3, cost, 1,
-                              contTime);
+                              *contTime);
         }
     }
 
@@ -37,7 +37,7 @@ int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
         if (cache3[i].addBlock == add.addBlock) {
             cache3[i].cacheHit = 3;
             return cachesTest(i, RAM, cache1, cache2, cache3, cost, 2,
-                              contTime);
+                              *contTime);
         }
     }
 
@@ -46,7 +46,7 @@ int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
         if (RAM[i].addBlock == add.addBlock) {
             RAM[i].cacheHit = 4;
             return cachesTest(i, RAM, cache1, cache2, cache3, cost, 3,
-                              contTime);
+                              *contTime);
         }
     }
 
@@ -70,46 +70,12 @@ int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
             RAM[i].cacheHit = 5;
             // fclose(arq);
             return cachesTest(i, RAM, cache1, cache2, cache3, cost, 3,
-                              contTime);
+                              *contTime);
         }
     }
 
-    // verificar se vai usar essa porra aqui
-
-    // cost += 13;
-    // for (int i = 0; i < sizeCache3; i++) {
-    //     if ((!cache3[i].updated) && cache3[i].isEmpty) {
-    //         cache3[i] = RAM[(int)add.addBlock];
-    //         cache3[i].cacheHit = 4;
-
-    //         return cachesTest(i, cache1, cache2, cache3, cost, 2, contTime);
-    //     }
-    // }
-
-    // cost += 14;
-    // for (int i = 0; i < sizeRAM; i++) {
-    //     if ((!RAM[i].updated) && RAM[i].isEmpty) {
-    //         // pegar do arquivo
-    //         // RAM[i] = RAM[(int)add.addBlock];
-    //         RAM[i].cacheHit = 4;
-
-    //         return cachesTest(i, cache1, cache2, cache3, cost, 3, contTime);
-    //     }
-    // }
-
-    // implementar HD blablabla
-    // int cache3Position = getOldestPosition(sizeCache3, cache3, contTime);
-    // RAM[cache3[cache3Position].addBlock] = cache3[cache3Position];
-    // RAM[cache3[cache3Position].addBlock].updated = false;  // virar false
-    // RAM[cache3[cache3Position].addBlock].isEmpty = false;  // virar false
-
-    // cache3[cache3Position] = RAM[(int)add.addBlock];
-    // cache3[cache3Position].cacheHit = 5;
-    // return cachesTest(cache3Position, RAM, cache1, cache2, cache3, cost, 0,
-    //                   contTime);
-
-    int RAMposition = getOldestPosition(sizeRAM, RAM, contTime);
-    printf("%d\n", RAMposition);
+    int RAMposition = getOldestPosition(sizeRAM, RAM, *contTime);
+    // printf("%d 78\n", RAMposition);
 
     RAM[RAMposition].updated = false;
     RAM[RAMposition].isEmpty = false;
@@ -128,7 +94,7 @@ int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
     RAM[RAMposition] = getEM;
     RAM[RAMposition].cacheHit = 5;
     return cachesTest(RAMposition, RAM, cache1, cache2, cache3, cost, 3,
-                      contTime);
+                      *contTime);
 }
 int cachesTest(int i, MemoryBlock *RAM, MemoryBlock *cache1,
                MemoryBlock *cache2, MemoryBlock *cache3, int cost, int isCache2,
@@ -145,7 +111,7 @@ int cachesTest(int i, MemoryBlock *RAM, MemoryBlock *cache1,
             }
         }
         if (verify == 0) {
-            cache3position = getOldestPosition(sizeCache2, cache2, contTime);
+            cache3position = getOldestPosition(sizeCache3, cache3, contTime);
         }
 
         aux = cache3[cache3position];
@@ -198,7 +164,8 @@ int cachesTest(int i, MemoryBlock *RAM, MemoryBlock *cache1,
 
 int getOldestPosition(int sizeCache, MemoryBlock *cache, int contTime) {
     int oldestTime = contTime;
-    int position = 0;
+    // printf("tempo oldest position %d\n", contTime);
+    int position;
     for (int i = 0; i < sizeCache; i++) {
         if (cache[i].sec < oldestTime) {
             oldestTime = cache[i].sec;

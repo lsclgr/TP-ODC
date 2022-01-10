@@ -8,7 +8,6 @@
 #include <time.h>
 
 #include "MMU.h"
-#include "instructionGenerator.h"
 
 void machine(int PC, int interruption, Instruction* instruction, FILE* arq,
              MemoryBlock* RAM, MemoryBlock* cache1, MemoryBlock* cache2,
@@ -46,7 +45,7 @@ void machine(int PC, int interruption, Instruction* instruction, FILE* arq,
     MemoryBlock memoryDataAdd3;
     Instruction inst;
 
-    while (opcode != -1) {
+    while (instruction[PC].opcode != -1) {
         inst = instruction[PC];
         printf(
             "\nOPCODE2: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d "
@@ -66,15 +65,15 @@ void machine(int PC, int interruption, Instruction* instruction, FILE* arq,
         opcode = inst.opcode;
         if (opcode != -1) {
             indexAdd1 = searchInMemories(inst.add1, arq, RAM, cache1, cache2,
-                                         cache3, contTime);
+                                         cache3, &contTime);
             memoryDataAdd1 = cache1[indexAdd1];
 
             indexAdd2 = searchInMemories(inst.add2, arq, RAM, cache1, cache2,
-                                         cache3, contTime);
+                                         cache3, &contTime);
             memoryDataAdd2 = cache1[indexAdd2];
 
             indexAdd3 = searchInMemories(inst.add3, arq, RAM, cache1, cache2,
-                                         cache3, contTime);
+                                         cache3, &contTime);
             memoryDataAdd3 = cache1[indexAdd3];
 
             cost += memoryDataAdd1.cost;
@@ -218,18 +217,18 @@ void machine(int PC, int interruption, Instruction* instruction, FILE* arq,
                 printf("\nINICIO TRATADOR DE INTERRUPÇÃO\n");
                 system("sleep 02");
                 //  colocar tempinho para ficar realista
-                int numRandomoInstrucions = rand() % 40;
-                printf("%d\n", numRandomoInstrucions);
+                // int numRandomoInstrucions = rand() % 40;
+                // printf("%d\n", numRandomoInstrucions);
                 // Instruction* instInterruption = NULL;
-                randomInstructions(numRandomoInstrucions, arq, RAM, cache1,
-                                   cache2, cache3);
-                // machine(0, 1, instInterruption, RAM, cache1, cache2, cache3);
+                // randomInstructions(numRandomoInstrucions, arq, RAM, cache1,
+                // cache2, cache3);
+                // machine(0, 1, instInterruption, RAM, cache1, cache2,cache3);
+                generatorInstructions2(0, arq, RAM, cache1, cache2, cache3);
                 printf("\nFIM TRATADOR DE INTERRUPÇÃO\n");
                 system("sleep 02");
                 //  fread(&PC, sizeof(int), 1, file);
                 //  fclose(file);
                 // break;
-                // generatorInstructions(PC, arq, RAM, cache1, cache2, cache3);
             }
         }
     }
@@ -265,7 +264,7 @@ void randomInstructions(int nInst, FILE* arq, MemoryBlock* RAM,
     instInterruption[nInst - 1].add3.addWord = -1;
 
     machine(0, 1, instInterruption, arq, RAM, cache1, cache2, cache3);
-    //  free(instruction);
+    free(instInterruption);
 }
 
 void generatorInstructions(int PC, FILE* arq, MemoryBlock* RAM,
@@ -339,5 +338,79 @@ void generatorInstructions(int PC, FILE* arq, MemoryBlock* RAM,
     fclose(arquivo);
     machine(PC, 0, instruction, arq, RAM, cache1, cache2, cache3);
 
-    // free(instruction);
+    free(instruction);
+}
+
+void generatorInstructions2(int PC, FILE* arq, MemoryBlock* RAM,
+                            MemoryBlock* cache1, MemoryBlock* cache2,
+                            MemoryBlock* cache3) {
+    // instGenerator();
+    FILE* arquivo = fopen("instructions2.txt", "r");
+    char aux[21], aux2[4];
+    Instruction instructionG[10001], inst;
+    int cont = 0;
+    // instructionG = malloc(10001 * sizeof(Instruction));
+    for (int i = 0; i < 10000; i++) {
+        cont = 0;
+        fgets(aux, 21, arquivo);
+        for (int j = 0; j < 21; j++) {
+            if (aux[j] == '\n') {
+                aux[j] = '\0';
+            }
+        }
+        for (int j = 0; j < 21;) {
+            if (aux[j] == '\0') {
+                break;
+            }
+            for (int k = 0; k < 4; k++) {
+                if (aux[j] != ':' && aux[j] != '\0') {
+                    aux2[k] = aux[j];
+                    j++;
+                } else {
+                    cont++;
+                    aux2[k] = '\0';
+                    j++;
+                    break;
+                }
+            }
+            switch (cont) {
+                case 1:
+                    inst.opcode = atoi(aux2);
+
+                    break;
+                case 2:
+                    inst.add1.addBlock = atoi(aux2);
+
+                    break;
+                case 3:
+                    inst.add1.addWord = atoi(aux2);
+
+                    break;
+                case 4:
+                    inst.add2.addBlock = atoi(aux2);
+
+                    break;
+                case 5:
+                    inst.add2.addWord = atoi(aux2);
+
+                    break;
+                case 6:
+                    inst.add3.addBlock = atoi(aux2);
+
+                    break;
+                case 7:
+                    inst.add3.addWord = atoi(aux2);
+
+                    break;
+                default:
+                    break;
+            }
+        }
+        instructionG[i] = inst;
+    }
+    instructionG[10000].opcode = -1;
+    fclose(arquivo);
+    machine(PC, 1, instructionG, arq, RAM, cache1, cache2, cache3);
+
+    // free(instructionG);
 }

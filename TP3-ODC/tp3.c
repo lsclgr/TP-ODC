@@ -59,7 +59,7 @@ int main() {
     cache2 = createEmptyCache(sizeCache2, cache2);
     cache3 = createEmptyCache(sizeCache3, cache3);
 
-    // randomInstructions(y, RAM, cache1, cache2, cache3);
+    // randomInstructions(10000, arq, RAM, cache1, cache2, cache3);
     generatorInstructions(0, arq, RAM, cache1, cache2, cache3);
     fclose(arq);
     return 0;
