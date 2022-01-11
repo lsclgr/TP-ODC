@@ -9,26 +9,30 @@
 
 #include "MMU.h"
 
-void machine(int PC, int interruption, Instruction* instruction, FILE* arquivo, FILE* arq,
-             MemoryBlock* RAM, MemoryBlock* cache1, MemoryBlock* cache2,
-             MemoryBlock* cache3) {
+void machine(int PC, int interruption, Instruction* instruction, FILE* arquivo,
+             FILE* arq, MemoryBlock* RAM, MemoryBlock* cache1,
+             MemoryBlock* cache2, MemoryBlock* cache3, int HD_ou_SSD) {
     srand(time(NULL));
     int opcode = RAND_MAX;
     long long int cost = 0;
-    int opcodeAux = instruction[0].opcode, pcAux = 0;
-    printf("\n\n");
-    while (opcodeAux != -1) {
-        printf(
-            "%d:%d:%d:%d:%d:%d:%d\n", instruction[pcAux].opcode,
-            instruction[pcAux].add1.addBlock, instruction[pcAux].add1.addWord,
-            instruction[pcAux].add2.addBlock, instruction[pcAux].add2.addWord,
-            instruction[pcAux].add3.addBlock, instruction[pcAux].add3.addWord);
-        opcodeAux = instruction[++pcAux].opcode;
-    }
-    printf("%d:%d:%d:%d:%d:%d:%d\n", instruction[pcAux].opcode,
-           instruction[pcAux].add1.addBlock, instruction[pcAux].add1.addWord,
-           instruction[pcAux].add2.addBlock, instruction[pcAux].add2.addWord,
-           instruction[pcAux].add3.addBlock, instruction[pcAux].add3.addWord);
+    //  int opcodeAux = instruction[0].opcode, pcAux = 0;
+    // printf("\n\n");
+    // while (opcodeAux != -1) {
+    //     printf(
+    //         "%d:%d:%d:%d:%d:%d:%d\n", instruction[pcAux].opcode,
+    //         instruction[pcAux].add1.addBlock,
+    //         instruction[pcAux].add1.addWord,
+    //         instruction[pcAux].add2.addBlock,
+    //         instruction[pcAux].add2.addWord,
+    //         instruction[pcAux].add3.addBlock,
+    //         instruction[pcAux].add3.addWord);
+    //     opcodeAux = instruction[++pcAux].opcode;
+    // }
+    // printf("%d:%d:%d:%d:%d:%d:%d\n", instruction[pcAux].opcode,
+    //        instruction[pcAux].add1.addBlock, instruction[pcAux].add1.addWord,
+    //        instruction[pcAux].add2.addBlock, instruction[pcAux].add2.addWord,
+    //        instruction[pcAux].add3.addBlock,
+    //        instruction[pcAux].add3.addWord);
 
     int missC1 = 0;
     int hitC1 = 0;
@@ -48,7 +52,7 @@ void machine(int PC, int interruption, Instruction* instruction, FILE* arquivo, 
     while (instruction[PC].opcode != -1) {
         inst = instruction[PC];
         printf(
-            "\nOPCODE2: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d "
+            "\nOPCODE: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d "
             "add3p: %d\n",
             instruction[PC].opcode, instruction[PC].add1.addBlock,
             instruction[PC].add1.addWord, instruction[PC].add2.addBlock,
@@ -64,17 +68,22 @@ void machine(int PC, int interruption, Instruction* instruction, FILE* arquivo, 
         //     inst.add3.addBlock, inst.add3.addWord);
         opcode = inst.opcode;
         if (opcode != -1) {
+            // printf("NENHUM Search????????????????\n");
             indexAdd1 = searchInMemories(inst.add1, arq, RAM, cache1, cache2,
-                                         cache3, &contTime);
+                                         cache3, &contTime, HD_ou_SSD);
             memoryDataAdd1 = cache1[indexAdd1];
+            // printf("search 1 ??????????\n");
 
             indexAdd2 = searchInMemories(inst.add2, arq, RAM, cache1, cache2,
-                                         cache3, &contTime);
+                                         cache3, &contTime, HD_ou_SSD);
             memoryDataAdd2 = cache1[indexAdd2];
+            // printf("search 2 ??????????\n");
 
             indexAdd3 = searchInMemories(inst.add3, arq, RAM, cache1, cache2,
-                                         cache3, &contTime);
+                                         cache3, &contTime, HD_ou_SSD);
             memoryDataAdd3 = cache1[indexAdd3];
+
+            // printf("Passou do search\n");
 
             cost += memoryDataAdd1.cost;
             cost += memoryDataAdd2.cost;
@@ -215,21 +224,24 @@ void machine(int PC, int interruption, Instruction* instruction, FILE* arquivo, 
                 // file = fopen("pc.dat", "rb+");
                 // fwrite(&PC, sizeof(int), 1, file);
                 printf("\nINICIO TRATADOR DE INTERRUPÇÃO\n");
+
+                //    colocar tempinho para ficar realista
+                int numRandomoInstrucions = (rand() % 40) + 1;
+                printf("Instruções Geradas: %d\n", (numRandomoInstrucions - 1));
                 system("sleep 02");
-                //   colocar tempinho para ficar realista
-                //  int numRandomoInstrucions = rand() % 40;
-                //  printf("%d\n", numRandomoInstrucions);
-                //  Instruction* instInterruption = NULL;
-                //  randomInstructions(numRandomoInstrucions, arq, RAM, cache1,
-                //  cache2, cache3);
-                //  machine(0, 1, instInterruption, RAM, cache1, cache2,cache3);
-                generatorInstructions2(0, arquivo, arq, RAM, cache1, cache2, cache3);
+                //   Instruction* instInterruption = NULL;
+                randomInstructions(numRandomoInstrucions, arquivo, arq, RAM,
+                                   cache1, cache2, cache3, HD_ou_SSD);
+                //   machine(0, 1, instInterruption, RAM, cache1,
+                //   cache2,cache3);
+                // generatorInstructions2(0, arquivo, arq, RAM, cache1, cache2,
+                // cache3);
                 printf("\nFIM TRATADOR DE INTERRUPÇÃO\n");
                 system("sleep 02");
-                exit(1);
-                //   fread(&PC, sizeof(int), 1, file);
-                //   fclose(file);
-                //  break;
+                // exit(1);
+                //    fread(&PC, sizeof(int), 1, file);
+                //    fclose(file);
+                //   break;
             }
         }
     }
@@ -237,9 +249,12 @@ void machine(int PC, int interruption, Instruction* instruction, FILE* arquivo, 
 
 void randomInstructions(int nInst, FILE* arquivo, FILE* arq, MemoryBlock* RAM,
                         MemoryBlock* cache1, MemoryBlock* cache2,
-                        MemoryBlock* cache3) {
+                        MemoryBlock* cache3, int HD_ou_SSD) {
     Instruction inst;
-    Instruction* instInterruption = malloc(nInst * sizeof(Instruction));
+    // Instruction* instInterruption = malloc(nInst * sizeof(Instruction));
+
+    Instruction instInterruption[nInst];
+
     for (int i = 0; i < (nInst - 1); i++) {
         inst.opcode = rand() % 4;
         inst.add1.addBlock = rand() % 1000;
@@ -250,9 +265,9 @@ void randomInstructions(int nInst, FILE* arquivo, FILE* arq, MemoryBlock* RAM,
 
         inst.add3.addBlock = rand() % 1000;
         inst.add3.addWord = rand() % 4;
-        printf("%d:%d:%d:%d:%d:%d:%d\n", inst.opcode, inst.add1.addBlock,
-               inst.add1.addWord, inst.add2.addBlock, inst.add2.addWord,
-               inst.add3.addBlock, inst.add3.addWord);
+        // printf("%d:%d:%d:%d:%d:%d:%d\n", inst.opcode, inst.add1.addBlock,
+        //        inst.add1.addWord, inst.add2.addBlock, inst.add2.addWord,
+        //        inst.add3.addBlock, inst.add3.addWord);
         instInterruption[i] = inst;
     }
 
@@ -264,13 +279,14 @@ void randomInstructions(int nInst, FILE* arquivo, FILE* arq, MemoryBlock* RAM,
     instInterruption[nInst - 1].add3.addBlock = -1;
     instInterruption[nInst - 1].add3.addWord = -1;
 
-    machine(0, 1, instInterruption, arquivo, arq, RAM, cache1, cache2, cache3);
-    free(instInterruption);
+    machine(0, 1, instInterruption, arquivo, arq, RAM, cache1, cache2, cache3,
+            HD_ou_SSD);
+    // free(instInterruption);
 }
 
 void generatorInstructions(int PC, FILE* arquivo, FILE* arq, MemoryBlock* RAM,
                            MemoryBlock* cache1, MemoryBlock* cache2,
-                           MemoryBlock* cache3) {
+                           MemoryBlock* cache3, int HD_ou_SSD) {
     // instGenerator();
     FILE* arquivo2 = fopen("instrucoes.txt", "r");
     char aux[21], aux2[4];
@@ -337,96 +353,101 @@ void generatorInstructions(int PC, FILE* arquivo, FILE* arq, MemoryBlock* RAM,
     }
     instruction[10000].opcode = -1;
     fclose(arquivo2);
-    machine(PC, 0, instruction, arquivo, arq, RAM, cache1, cache2, cache3);
+    machine(PC, 0, instruction, arquivo, arq, RAM, cache1, cache2, cache3,
+            HD_ou_SSD);
 
     free(instruction);
 }
 
-void generatorInstructions2(int PC, FILE* arquivo, FILE* arq, MemoryBlock* RAM,
-                            MemoryBlock* cache1, MemoryBlock* cache2,
-                            MemoryBlock* cache3) {
-    // instGenerator();
+// void generatorInstructions2(int PC, FILE* arquivo, FILE* arq, MemoryBlock*
+// RAM,
+//                             MemoryBlock* cache1, MemoryBlock* cache2,
+//                             MemoryBlock* cache3) {
+//     // instGenerator();
 
-    char aux[21], aux2[4];
-    Instruction instructionG[51], inst;
-    int cont = 0;
-    // instructionG = malloc(10001 * sizeof(Instruction));
-    for (int i = 0; i < 50; i++) {
-        cont = 0;
-        fgets(aux, 21, arquivo);
-        for (int j = 0; j < 21; j++) {
-            if (aux[j] == '\n') {
-                aux[j] = '\0';
-            }
-        }
-        for (int j = 0; j < 21;) {
-            if (aux[j] == '\0') {
-                break;
-            }
-            for (int k = 0; k < 4; k++) {
-                if (aux[j] != ':' && aux[j] != '\0') {
-                    aux2[k] = aux[j];
-                    j++;
-                } else {
-                    cont++;
-                    aux2[k] = '\0';
-                    j++;
-                    break;
-                }
-            }
-            switch (cont) {
-                case 1:
-                    inst.opcode = atoi(aux2);
+//     char aux[21], aux2[4];
+//     Instruction instructionG[51], inst;
+//     int cont = 0;
+//     // instructionG = malloc(10001 * sizeof(Instruction));
+//     for (int i = 0; i < 50; i++) {
+//         cont = 0;
+//         fgets(aux, 21, arquivo);
+//         for (int j = 0; j < 21; j++) {
+//             if (aux[j] == '\n') {
+//                 aux[j] = '\0';
+//             }
+//         }
+//         for (int j = 0; j < 21;) {
+//             if (aux[j] == '\0') {
+//                 break;
+//             }
+//             for (int k = 0; k < 4; k++) {
+//                 if (aux[j] != ':' && aux[j] != '\0') {
+//                     aux2[k] = aux[j];
+//                     j++;
+//                 } else {
+//                     cont++;
+//                     aux2[k] = '\0';
+//                     j++;
+//                     break;
+//                 }
+//             }
+//             switch (cont) {
+//                 case 1:
+//                     inst.opcode = atoi(aux2);
 
-                    break;
-                case 2:
-                    inst.add1.addBlock = atoi(aux2);
+//                     break;
+//                 case 2:
+//                     inst.add1.addBlock = atoi(aux2);
 
-                    break;
-                case 3:
-                    inst.add1.addWord = atoi(aux2);
+//                     break;
+//                 case 3:
+//                     inst.add1.addWord = atoi(aux2);
 
-                    break;
-                case 4:
-                    inst.add2.addBlock = atoi(aux2);
+//                     break;
+//                 case 4:
+//                     inst.add2.addBlock = atoi(aux2);
 
-                    break;
-                case 5:
-                    inst.add2.addWord = atoi(aux2);
+//                     break;
+//                 case 5:
+//                     inst.add2.addWord = atoi(aux2);
 
-                    break;
-                case 6:
-                    inst.add3.addBlock = atoi(aux2);
+//                     break;
+//                 case 6:
+//                     inst.add3.addBlock = atoi(aux2);
 
-                    break;
-                case 7:
-                    inst.add3.addWord = atoi(aux2);
+//                     break;
+//                 case 7:
+//                     inst.add3.addWord = atoi(aux2);
 
-                    break;
-                default:
-                    break;
-            }
-        }
-        instructionG[i] = inst;
-    }
-    instructionG[50].opcode = -1;
-    int pcAux = 0;
+//                     break;
+//                 default:
+//                     break;
+//             }
+//         }
+//         instructionG[i] = inst;
+//     }
+//     instructionG[50].opcode = -1;
+//     int pcAux = 0;
 
-    while (instructionG[pcAux].opcode != -1) {
-        printf(
-            "%d:%d:%d:%d:%d:%d:%d\n", instructionG[pcAux].opcode,
-            instructionG[pcAux].add1.addBlock, instructionG[pcAux].add1.addWord,
-            instructionG[pcAux].add2.addBlock, instructionG[pcAux].add2.addWord,
-            instructionG[pcAux].add3.addBlock, instructionG[pcAux].add3.addWord);
-        pcAux++;
-    }
-    printf(
-        "%d:%d:%d:%d:%d:%d:%d\n", instructionG[pcAux].opcode,
-        instructionG[pcAux].add1.addBlock, instructionG[pcAux].add1.addWord,
-        instructionG[pcAux].add2.addBlock, instructionG[pcAux].add2.addWord,
-        instructionG[pcAux].add3.addBlock, instructionG[pcAux].add3.addWord);
+//     while (instructionG[pcAux].opcode != -1) {
+//         printf(
+//             "%d:%d:%d:%d:%d:%d:%d\n", instructionG[pcAux].opcode,
+//             instructionG[pcAux].add1.addBlock,
+//             instructionG[pcAux].add1.addWord,
+//             instructionG[pcAux].add2.addBlock,
+//             instructionG[pcAux].add2.addWord,
+//             instructionG[pcAux].add3.addBlock,
+//             instructionG[pcAux].add3.addWord);
+//         pcAux++;
+//     }
+//     printf(
+//         "%d:%d:%d:%d:%d:%d:%d\n", instructionG[pcAux].opcode,
+//         instructionG[pcAux].add1.addBlock, instructionG[pcAux].add1.addWord,
+//         instructionG[pcAux].add2.addBlock, instructionG[pcAux].add2.addWord,
+//         instructionG[pcAux].add3.addBlock, instructionG[pcAux].add3.addWord);
 
-    machine(PC, 1, instructionG, arquivo, arq, RAM, cache1, cache2, cache3);
+//     machine(PC, 1, instructionG, arquivo, arq, RAM, cache1, cache2, cache3);
 
-    // free(instructionG);
-}
+//     // free(instructionG);
+// }

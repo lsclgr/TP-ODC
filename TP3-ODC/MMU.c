@@ -1,18 +1,26 @@
 #include "MMU.h"
 
+#include <limits.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
 // maquina -> cache1 -> cache2 -> cache3 -> RAM
 
-int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
-                     MemoryBlock *cache1, MemoryBlock *cache2,
-                     MemoryBlock *cache3, int *contTime) {
+int searchInMemories(Address add, FILE* arq, MemoryBlock* RAM,
+                     MemoryBlock* cache1, MemoryBlock* cache2,
+                     MemoryBlock* cache3, int* contTime, int HD_ou_SSD) {
     // arq = fopen("EM.dat", "rb+");
+
+    // printf("entrou no search\n");
+
     MemoryBlock blockEM;
     int cost = 0;
     cost += 10;
-    (*contTime)++;
+    *contTime = *contTime + 1;
+
     for (int i = 0; i < sizeCache1; i++) {
         if (cache1[i].addBlock == add.addBlock) {
             cache1[i].cost = cost;
@@ -28,7 +36,7 @@ int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
         if (cache2[i].addBlock == add.addBlock) {
             cache2[i].cacheHit = 2;
             return cachesTest(i, RAM, cache1, cache2, cache3, cost, 1,
-                              *contTime);
+                              contTime);
         }
     }
 
@@ -37,7 +45,7 @@ int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
         if (cache3[i].addBlock == add.addBlock) {
             cache3[i].cacheHit = 3;
             return cachesTest(i, RAM, cache1, cache2, cache3, cost, 2,
-                              *contTime);
+                              contTime);
         }
     }
 
@@ -46,9 +54,11 @@ int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
         if (RAM[i].addBlock == add.addBlock) {
             RAM[i].cacheHit = 4;
             return cachesTest(i, RAM, cache1, cache2, cache3, cost, 3,
-                              *contTime);
+                              contTime);
         }
     }
+
+    // printf("Verificou memorias\n");
 
     // primeiramente pegar o bloco do arquivo
     cost += 14;
@@ -60,6 +70,27 @@ int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
             //     perror("Erro ao abrir arquivo60");
             //     exit(1);
             // }
+            if (HD_ou_SSD == 1) {
+                printf("\nBuscando na Memória:\n");
+
+                for (int w = 0; w <= 100; w = w + 25) {
+                    printf("%d%%  ", w);
+                    fflush(stdout);  // garante a escrita de dados imediatamente
+                                     // na tela
+                    // repare mod 10, eu limito a qtd de pontos q serao gerados
+                    for (int z = 0; z < w / 8; z++) {
+                        printf(".");
+                    }
+                    fflush(stdout);  // garante a escrita de dados imediatamente
+                                     // na tela
+                    usleep(500000);  // função espera por tempo, parametro em
+                                     // microsegundos.
+                    if (w != 100) {
+                        limpa_linha();
+                    }
+                }
+                printf("\n\n -- Bloco encontrado --\n\n");
+            }
             fseek(arq, add.addBlock * sizeof(MemoryBlock),
                   SEEK_SET);  // usar o fseek para pegar o bloco
             fread(&blockEM, sizeof(MemoryBlock), 1, arq);
@@ -70,11 +101,11 @@ int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
             RAM[i].cacheHit = 5;
             // fclose(arq);
             return cachesTest(i, RAM, cache1, cache2, cache3, cost, 3,
-                              *contTime);
+                              contTime);
         }
     }
 
-    int RAMposition = getOldestPosition(sizeRAM, RAM, *contTime);
+    int RAMposition = getOldestPosition(sizeRAM, RAM, contTime);
     // printf("%d 78\n", RAMposition);
 
     RAM[RAMposition].updated = false;
@@ -85,6 +116,25 @@ int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
     //      perror("Erro ao abrir arquivo119");
     //      exit(1);
     //  }
+    if (HD_ou_SSD == 1) {
+        printf("\nBuscando na Memória:\n");
+
+        for (int w = 0; w <= 100; w = w + 25) {
+            printf("%d%%  ", w);
+            fflush(stdout);  // garante a escrita de dados imediatamente na tela
+            // repare mod 10, eu limito a qtd de pontos q serao gerados
+            for (int z = 0; z < w / 8; z++) {
+                printf(".");
+            }
+            fflush(stdout);  // garante a escrita de dados imediatamente na tela
+            usleep(500000);  // função espera por tempo, parametro em
+                             // microsegundos.
+            if (w != 100) {
+                limpa_linha();
+            }
+        }
+        printf("\n\n -- Bloco encontrado --\n\n");
+    }
     fseek(arq, RAM[RAMposition].addBlock * sizeof(MemoryBlock),
           SEEK_SET);  // usar o fseek para pegar o bloco
     MemoryBlock getEM;
@@ -94,13 +144,13 @@ int searchInMemories(Address add, FILE *arq, MemoryBlock *RAM,
     RAM[RAMposition] = getEM;
     RAM[RAMposition].cacheHit = 5;
     return cachesTest(RAMposition, RAM, cache1, cache2, cache3, cost, 3,
-                      *contTime);
+                      contTime);
 }
-int cachesTest(int i, MemoryBlock *RAM, MemoryBlock *cache1,
-               MemoryBlock *cache2, MemoryBlock *cache3, int cost, int isCache2,
-               int contTime) {
+int cachesTest(int i, MemoryBlock* RAM, MemoryBlock* cache1,
+               MemoryBlock* cache2, MemoryBlock* cache3, int cost, int isCache2,
+               int* contTime) {
     MemoryBlock aux;
-    int cache1position, cache2position, cache3position, verify = 0;
+    int cache1position = 0, cache2position, cache3position, verify = 0;
 
     if (isCache2 == 3) {
         for (int j = 0; j < sizeCache3; j++) {
@@ -117,6 +167,7 @@ int cachesTest(int i, MemoryBlock *RAM, MemoryBlock *cache1,
         aux = cache3[cache3position];
         cache3[cache3position] = RAM[i];
         RAM[i] = aux;
+        isCache2 = 2;
     } else if (isCache2 == 2) {
         cache3position = i;
     }
@@ -156,16 +207,16 @@ int cachesTest(int i, MemoryBlock *RAM, MemoryBlock *cache1,
     cache1[cache1position] = cache2[cache2position];
     cache2[cache2position] = aux;
 
-    cache1[cache1position].sec = contTime;
+    cache1[cache1position].sec = *contTime;
 
     cache1[cache1position].cost = cost;
     return cache1position;
 }
 
-int getOldestPosition(int sizeCache, MemoryBlock *cache, int contTime) {
-    int oldestTime = contTime;
+int getOldestPosition(int sizeCache, MemoryBlock* cache, int* contTime) {
+    int oldestTime = *contTime;
     // printf("tempo oldest position %d\n", contTime);
-    int position;
+    int position = 0;
     for (int i = 0; i < sizeCache; i++) {
         if (cache[i].sec < oldestTime) {
             oldestTime = cache[i].sec;
@@ -173,4 +224,22 @@ int getOldestPosition(int sizeCache, MemoryBlock *cache, int contTime) {
         }
     }
     return position;
+}
+
+void limpa_linha() {
+    int i;  // indice do caracter na linha
+    int max_caracter =
+        50;  // indica o maximo de caracter que a linha pode chegar a ter, para
+             // linhas com mt texto, coloque um nmr bem maior
+    printf(
+        "\r");  // retorna para o inicio da linha que pretende reutilizar, isso
+                // não limpa a linha, apenas posiciona cursor ao inicio da linha
+
+    // Agora precisamos limpar a linha,
+    // substitui todos os caracteres existentes por espaço em branco
+    for (i = 0; i < max_caracter; i++) {
+        printf(" ");  // vai preenchendo a linha com espaços em branco
+    }
+
+    printf("\r");  // volta ao inicio da linha , dessa vez ela está em branco.
 }

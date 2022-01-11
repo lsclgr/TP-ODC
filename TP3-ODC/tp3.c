@@ -10,10 +10,11 @@
 int main() {
     MemoryBlock *HD = NULL, *RAM = NULL, *cache1 = NULL, *cache2 = NULL,
                 *cache3 = NULL;
-    FILE *arq;
+    int HD_ou_SSD;
+    FILE* arq;
     int ret;
     // int y = 1000;
-    FILE *arquivo = fopen("instructions2.txt", "r");
+    FILE* arquivo = fopen("instructions2.txt", "r");
 
     arq = fopen("EM.dat", "wb+");
     if (!arq) {
@@ -60,9 +61,16 @@ int main() {
     cache2 = createEmptyCache(sizeCache2, cache2);
     cache3 = createEmptyCache(sizeCache3, cache3);
 
-    // randomInstructions(10000, arq, RAM, cache1, cache2, cache3);
-    generatorInstructions(0, arquivo, arq, RAM, cache1, cache2, cache3);
-    fclose(arq);
-    fclose(arquivo);
+    printf("Escolha\n 1- HD  2- SSD\n");
+    scanf("%d", &HD_ou_SSD);
+
+    if (HD_ou_SSD == 1 || HD_ou_SSD == 2) {
+        // randomInstructions(10000, arq, RAM, cache1, cache2, cache3);
+        generatorInstructions(0, arquivo, arq, RAM, cache1, cache2, cache3,
+                              HD_ou_SSD);
+        fclose(arq);
+        fclose(arquivo);
+    }
+
     return 0;
 }
