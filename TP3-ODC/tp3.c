@@ -5,12 +5,14 @@
 
 #include "MMU.h"
 #include "TAD_Cache.h"
+#include "instructionGenerator.h"
 #include "machine.h"
 
 int main() {
     MemoryBlock *HD = NULL, *RAM = NULL, *cache1 = NULL, *cache2 = NULL,
                 *cache3 = NULL;
     int HD_ou_SSD;
+    instGenerator();
     FILE* arq;
     int ret;
     // int y = 1000;

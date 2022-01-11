@@ -51,6 +51,7 @@ void machine(int PC, int interruption, Instruction* instruction, FILE* arquivo,
 
     while (instruction[PC].opcode != -1) {
         inst = instruction[PC];
+        printf("\nposicao PC %d\n", PC);
         printf(
             "\nOPCODE: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d "
             "add3p: %d\n",
@@ -58,8 +59,6 @@ void machine(int PC, int interruption, Instruction* instruction, FILE* arquivo,
             instruction[PC].add1.addWord, instruction[PC].add2.addBlock,
             instruction[PC].add2.addWord, instruction[PC].add3.addBlock,
             instruction[PC].add3.addWord);
-
-        printf("\nposicao PC %d\n", PC);
 
         // printf(
         //     "\nOPCODE: %d  add1b: %d add1p: %d add2b: %d add2p: %d add3b: %d
